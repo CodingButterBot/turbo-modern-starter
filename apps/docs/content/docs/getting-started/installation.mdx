@@ -1,0 +1,97 @@
+---
+title: Installation
+description: How to install and set up Turbo Modern Starter for development.
+---
+
+# Installation
+
+This guide will help you set up the Turbo Modern Starter monorepo for local development.
+
+## Prerequisites
+
+Before you begin, make sure you have the following installed:
+
+- **Node.js** (v18 or later)
+- **pnpm** (v8 or later)
+- **Git**
+- **Docker** (optional, for Directus CMS)
+
+## Clone the Repository
+
+```bash
+git clone https://github.com/CodingButterBot/turbo-modern-starter.git
+cd turbo-modern-starter
+```
+
+## Install Dependencies
+
+The monorepo uses pnpm workspaces to manage dependencies across all packages and apps.
+
+```bash
+pnpm install
+```
+
+This command installs all dependencies for all packages and apps in the monorepo.
+
+## Development Setup
+
+After installation, you can run various commands to develop, test, and build the project.
+
+### Start Development Servers
+
+To start all development servers in parallel:
+
+```bash
+pnpm dev
+```
+
+This will start:
+- The web app at [http://localhost:3000](http://localhost:3000)
+- The documentation site at [http://localhost:3001](http://localhost:3001)
+- The extension builder in watch mode
+
+### Run Specific Apps
+
+To run just one app, use the `--filter` flag:
+
+```bash
+# Run just the web app
+pnpm dev --filter web
+
+# Run just the docs site
+pnpm dev --filter docs
+
+# Build just the extension
+pnpm dev --filter extension
+```
+
+## Building for Production
+
+To build all apps and packages for production:
+
+```bash
+pnpm build
+```
+
+This builds all packages and apps in the correct dependency order.
+
+## Running Directus (Optional)
+
+If you want to use the Directus CMS backend:
+
+```bash
+cd apps/directus
+docker-compose up -d
+```
+
+This starts Directus at [http://localhost:8055](http://localhost:8055) with default credentials:
+- Email: admin@example.com
+- Password: password123
+
+## Next Steps
+
+Now that you have the environment set up, check out the following guides:
+
+- [Project Structure](/docs/project-structure) - Understand how the monorepo is organized
+- [Using Shared UI Components](/docs/guides/ui-components) - How to use the shared UI library
+- [Browser Extension Development](/docs/guides/extension-development) - How to develop the browser extension

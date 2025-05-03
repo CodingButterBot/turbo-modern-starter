@@ -1,0 +1,112 @@
+---
+title: UI Components
+description: How to use the shared UI components from @repo/ui.
+---
+
+# UI Components
+
+Turbo Modern Starter includes a shared UI library (`@repo/ui`) that provides consistent components for all applications in the monorepo.
+
+## Using Components
+
+To use the shared UI components in any app, import them directly from the `@repo/ui` package:
+
+```tsx
+import { Button, ModuleDisplay } from "@repo/ui";
+
+function MyComponent() {
+  return (
+    <div>
+      <h1>My Component</h1>
+      <Button variant="primary" onClick={() => alert('Clicked!')}>
+        Click Me
+      </Button>
+    </div>
+  );
+}
+```
+
+## Available Components
+
+### Button
+
+A styled button component that supports multiple variants:
+
+```tsx
+<Button variant="primary">Primary Button</Button>
+<Button variant="secondary">Secondary Button</Button>
+```
+
+**Props:**
+- `variant`: `"primary" | "secondary"` - The button style variant
+- All standard HTML button attributes are also supported
+
+### ModuleDisplay
+
+A component to display the result of a random selection from the module:
+
+```tsx
+<ModuleDisplay result="Selected Option" />
+```
+
+**Props:**
+- `result`: `string` - The text to display as the selected result
+
+## Styling with Tailwind
+
+All UI components use Tailwind CSS for styling. The Tailwind configuration is shared across all applications through the UI package's `tailwind.config.js`.
+
+To include the shared Tailwind styles in your app, import the CSS file:
+
+```tsx
+// In your root layout or entry file:
+import "@repo/ui/styles.css";
+```
+
+## Custom Styling
+
+You can customize the appearance of components by passing className props, which will be merged with the default styles:
+
+```tsx
+<Button 
+  variant="primary" 
+  className="px-8 py-3 text-lg" // Override default padding and text size
+>
+  Custom Sized Button
+</Button>
+```
+
+## Adding New Components
+
+To add a new component to the shared UI library:
+
+1. Create a new file in `packages/ui/src/`
+2. Implement your component with TypeScript and Tailwind
+3. Export it from `packages/ui/src/index.ts`
+4. Add tests in `packages/ui/src/__tests__/`
+5. Document usage in this guide
+
+## Theme Support
+
+The UI library supports both light and dark modes through Tailwind's dark mode classes. The dark mode is activated by adding the `dark` class to the `html` element.
+
+```tsx
+// Example toggle implementation
+function ThemeToggle() {
+  const [isDark, setIsDark] = useState(false);
+  
+  useEffect(() => {
+    if (isDark) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [isDark]);
+  
+  return (
+    <button onClick={() => setIsDark(!isDark)}>
+      Toggle {isDark ? 'Light' : 'Dark'} Mode
+    </button>
+  );
+}
+```

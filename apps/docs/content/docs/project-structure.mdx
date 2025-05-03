@@ -1,0 +1,112 @@
+---
+title: Project Structure
+description: Understanding the organization of the Turbo Modern Starter monorepo.
+---
+
+# Project Structure
+
+Turbo Modern Starter is organized as a monorepo using Turborepo and pnpm workspaces. This structure allows sharing code between packages while maintaining clear boundaries between applications.
+
+## Root Directory
+
+The root directory contains configuration files for the entire monorepo:
+
+- `package.json` - Root workspace definition and shared development dependencies
+- `pnpm-workspace.yaml` - Defines the workspace packages for pnpm
+- `turbo.json` - Turborepo configuration for task management
+- `tsconfig.json` - Base TypeScript configuration
+- `.eslintrc.json` - Root ESLint configuration
+- `.mcp.json` - MCP server configuration (for AI integration)
+
+## Directory Layout
+
+```
+turbo-modern-starter/
+├─ apps/                    # Applications
+│   ├─ web/                 # Next.js web application
+│   ├─ extension/           # Browser extension (Chrome/Firefox)
+│   ├─ docs/                # Documentation site (Next.js + Fumadocs)
+│   └─ directus/            # Directus CMS (Dockerized)
+├─ packages/                # Shared packages (internal libraries)
+│   ├─ @repo/ui/            # UI component library (React + Tailwind)
+│   ├─ @repo/module/        # Core module logic
+│   ├─ @repo/assets/        # Shared assets (SVGs, images, icons)
+│   ├─ @repo/env-config/    # Environment configuration helpers
+│   ├─ @repo/eslint-config/ # Shared ESLint config
+│   └─ @repo/typescript-config/ # Shared TypeScript config
+```
+
+## Applications (`apps/`)
+
+The `apps/` directory contains all standalone applications:
+
+### Web App (`apps/web/`)
+
+The main web application built with Next.js. It demonstrates the use of shared packages and provides a full-featured web interface.
+
+Key files:
+- `app/` - Next.js App Router
+- `next.config.js` - Next.js configuration
+- `tailwind.config.js` - Tailwind CSS configuration (extends shared config)
+
+### Browser Extension (`apps/extension/`)
+
+A browser extension that provides the same functionality in a compact form for Chrome and Firefox.
+
+Key files:
+- `manifest.json` - Browser extension manifest (v3)
+- `vite.config.ts` - Vite configuration for bundling the extension
+- `src/` - Extension source code
+
+### Documentation Site (`apps/docs/`)
+
+Documentation for the project built with Next.js and Fumadocs.
+
+Key files:
+- `content/docs/` - MDX documentation files
+- `app/` - Next.js App Router for the docs site
+- `source.config.ts` - Fumadocs configuration
+
+### Directus CMS (`apps/directus/`)
+
+A dockerized instance of Directus for content management.
+
+Key files:
+- `docker-compose.yml` - Docker Compose configuration
+- `.env.example` - Example environment variables
+
+## Shared Packages (`packages/`)
+
+The `packages/` directory contains shared code that can be imported by multiple applications:
+
+### UI Library (`packages/@repo/ui/`)
+
+Shared React components styled with Tailwind CSS.
+
+Key files:
+- `src/` - Component source code
+- `tailwind.config.js` - Base Tailwind configuration
+
+### Module Logic (`packages/@repo/module/`)
+
+Core business logic for the project.
+
+Key files:
+- `src/` - Core logic and type definitions
+- `src/__tests__/` - Unit tests
+
+### Other Packages
+
+- `@repo/assets/` - Shared assets like logos and icons
+- `@repo/env-config/` - Environment configuration utilities
+- `@repo/eslint-config/` - Shared ESLint rules
+- `@repo/typescript-config/` - Shared TypeScript compiler options
+
+## Development Workflow
+
+The monorepo setup enables efficient development workflows:
+
+1. **Dependency Management**: All dependencies are managed centrally with pnpm
+2. **Task Running**: Turborepo handles build pipelines and task caching
+3. **Code Sharing**: Packages can be imported directly by apps
+4. **Consistent Configuration**: ESLint and TypeScript configurations are shared

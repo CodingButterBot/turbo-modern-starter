@@ -1,0 +1,6 @@
+{
+  "extends": ["next/core-web-vitals", "@repo/eslint-config/library"],
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  }
+}

@@ -1,0 +1,107 @@
+---
+title: Browser Extension Development
+description: How to develop and test the browser extension.
+---
+
+# Browser Extension Development
+
+The Turbo Modern Starter includes a browser extension that provides the module functionality in a convenient popup interface.
+
+## Technology Stack
+
+The extension is built with:
+
+- **React** - UI library
+- **Vite** - Build tool
+- **@crxjs/vite-plugin** - Extension bundling
+- **Tailwind CSS** - Styling
+- **Manifest V3** - Chrome extension format
+
+## Development Workflow
+
+### Starting Development
+
+To work on the extension:
+
+```bash
+# From the root directory
+pnpm dev --filter extension
+
+# Or directly from the extension directory
+cd apps/extension
+pnpm dev
+```
+
+This starts a build in watch mode, which will rebuild the extension whenever you make changes.
+
+### Loading in Chrome
+
+After building the extension:
+
+1. Open Chrome and navigate to `chrome://extensions/`
+2. Enable "Developer mode" using the toggle in the top-right corner
+3. Click "Load unpacked" and select the `dist` directory inside `apps/extension/`
+4. The extension should now appear in your extensions list and toolbar
+
+### Reloading During Development
+
+After making changes:
+
+1. Wait for the rebuild to complete
+2. Go to `chrome://extensions/`
+3. Click the reload icon on the extension card
+4. Open the extension popup to see your changes
+
+## Extension Structure
+
+```
+apps/extension/
+├─ public/           # Static assets like icons
+├─ src/
+│  ├─ components/    # UI components
+│  ├─ PopupApp.tsx   # Main popup UI
+│  ├─ index.css      # Tailwind imports
+│  └─ main.tsx       # React entry point
+├─ manifest.json     # Extension manifest
+├─ index.html        # HTML entry point
+└─ vite.config.ts    # Vite configuration
+```
+
+## Using Shared Packages
+
+The extension uses the same shared packages as the web app:
+
+```tsx
+// Example: Using the RandomModule from @repo/module
+import { RandomModule } from "@repo/module";
+
+const module = new RandomModule(options);
+const winner = module.spin();
+```
+
+## Building for Production
+
+To create a production build:
+
+```bash
+pnpm build --filter extension
+```
+
+This creates a production-ready extension in the `apps/extension/dist` directory, which you can:
+
+1. Load as an unpacked extension for testing
+2. Zip for submission to the Chrome Web Store or Firefox Add-ons
+
+## Debugging Tips
+
+1. **Access the Console**: Right-click the extension popup and select "Inspect" to open DevTools
+2. **Background Script Debugging**: Go to `chrome://extensions/`, find your extension, and click "background page" under "Inspect views"
+3. **Manifest Issues**: Chrome will show warnings in `chrome://extensions/` if there are problems with your manifest.json
+
+## Distribution
+
+To package the extension for distribution:
+
+1. Build the extension with `pnpm build --filter extension`
+2. Zip the contents of the `dist` directory
+3. Upload to the Chrome Web Store Developer Dashboard or Firefox Add-ons Portal

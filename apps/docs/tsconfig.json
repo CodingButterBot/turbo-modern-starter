@@ -1,0 +1,33 @@
+{
+  "extends": "../../packages/typescript-config/base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"],
+      "@repo/ui": ["../../packages/ui/src"],
+      "@repo/ui/*": ["../../packages/ui/src/*"],
+      "@repo/module": ["../../packages/module/src"],
+      "@repo/module/*": ["../../packages/module/src/*"],
+      "@repo/assets": ["../../packages/assets/src"],
+      "@repo/assets/*": ["../../packages/assets/src/*"]
+    },
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "jsx": "preserve"
+  },
+  "include": [
+    "next-env.d.ts",
+    "app/**/*",
+    "content/**/*.mdx",
+    "lib/**/*",
+    ".next/types/**/*.ts",
+    "source.config.ts",
+    "mdx-components.tsx"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
