@@ -18,6 +18,11 @@
       "args": [
         "@playwright/mcp@latest"
       ]
+    },
+    "claude": {
+      "type": "stdio",
+      "command": "claude",
+      "args": ["mcp","serve"]
     }
   }
 }
