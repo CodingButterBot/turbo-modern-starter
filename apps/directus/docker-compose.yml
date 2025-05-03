@@ -1,0 +1,26 @@
+version: "3.8"
+services:
+  directus:
+    image: directus/directus:latest
+    ports:
+      - "8055:8055"
+    environment:
+      # Admin user credentials (on first run)
+      ADMIN_EMAIL: "admin@example.com"
+      ADMIN_PASSWORD: "password123"
+      # Use SQLite for database
+      DB_CLIENT: "sqlite3"
+      DB_FILENAME: "/directus/database/data.db"
+      # Set a secret for sessions (use a strong random in production)
+      SECRET: "devsecretkey"
+      # Enable real-time features
+      WEBSOCKETS_ENABLED: "true"
+    volumes:
+      - type: volume
+        source: directus_data
+        target: /directus/database
+    restart: unless-stopped
+
+volumes:
+  directus_data:
+    driver: local

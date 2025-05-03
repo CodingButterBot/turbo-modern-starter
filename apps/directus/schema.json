@@ -1,0 +1,245 @@
+{
+  "collections": [
+    {
+      "collection": "module_collections",
+      "meta": {
+        "collection": "module_collections",
+        "icon": "list_alt",
+        "note": "Sets of options for the module",
+        "display_template": "{{name}}",
+        "hidden": false,
+        "singleton": false,
+        "translations": null,
+        "archive_field": null,
+        "archive_app_filter": true,
+        "archive_value": null,
+        "unarchive_value": null,
+        "sort_field": null,
+        "accountability": "all",
+        "color": "#2563EB",
+        "item_duplication_fields": null,
+        "sort": null,
+        "group": null,
+        "collapse": "open"
+      },
+      "schema": {
+        "name": "module_collections",
+        "comment": "Sets of options for the module"
+      },
+      "fields": [
+        {
+          "field": "id",
+          "type": "integer",
+          "meta": {
+            "hidden": true,
+            "readonly": true,
+            "interface": "input",
+            "display": null,
+            "special": ["uuid"],
+            "collection": "module_collections"
+          },
+          "schema": {
+            "is_primary_key": true,
+            "has_auto_increment": true
+          }
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "meta": {
+            "interface": "input",
+            "options": {
+              "trim": true
+            },
+            "display": "formatted-value",
+            "display_options": null,
+            "readonly": false,
+            "hidden": false,
+            "width": "full",
+            "required": true,
+            "note": "The name of this collection of options"
+          },
+          "schema": {
+            "is_nullable": false,
+            "is_unique": false,
+            "max_length": 255
+          }
+        },
+        {
+          "field": "description",
+          "type": "text",
+          "meta": {
+            "interface": "input-multiline",
+            "display": "formatted-value",
+            "readonly": false,
+            "hidden": false,
+            "width": "full",
+            "required": false,
+            "note": "A description of this collection"
+          },
+          "schema": {
+            "is_nullable": true
+          }
+        },
+        {
+          "field": "created_at",
+          "type": "timestamp",
+          "meta": {
+            "interface": "datetime",
+            "readonly": true,
+            "hidden": true,
+            "width": "half",
+            "display": "datetime",
+            "special": ["date-created"]
+          },
+          "schema": {
+            "is_nullable": false
+          }
+        },
+        {
+          "field": "user_created",
+          "type": "string",
+          "meta": {
+            "interface": "select-dropdown-m2o",
+            "options": {
+              "template": "{{first_name}} {{last_name}}"
+            },
+            "special": ["user-created"],
+            "readonly": true,
+            "hidden": true,
+            "width": "half",
+            "display": "user"
+          },
+          "schema": {
+            "is_nullable": true
+          }
+        }
+      ]
+    },
+    {
+      "collection": "module_options",
+      "meta": {
+        "collection": "module_options",
+        "icon": "remove_red_eye",
+        "note": "Individual options within a collection",
+        "display_template": "{{label}}",
+        "hidden": false,
+        "singleton": false,
+        "translations": null,
+        "archive_field": null,
+        "archive_app_filter": true,
+        "archive_value": null,
+        "unarchive_value": null,
+        "sort_field": "sort",
+        "accountability": "all",
+        "color": "#4ade80",
+        "item_duplication_fields": null,
+        "sort": null,
+        "group": null,
+        "collapse": "open"
+      },
+      "schema": {
+        "name": "module_options",
+        "comment": "Individual options within a collection"
+      },
+      "fields": [
+        {
+          "field": "id",
+          "type": "integer",
+          "meta": {
+            "hidden": true,
+            "readonly": true,
+            "interface": "input",
+            "display": null,
+            "special": ["uuid"],
+            "collection": "module_options"
+          },
+          "schema": {
+            "is_primary_key": true,
+            "has_auto_increment": true
+          }
+        },
+        {
+          "field": "collection",
+          "type": "integer",
+          "meta": {
+            "interface": "select-dropdown-m2o",
+            "special": ["m2o"],
+            "options": {
+              "template": "{{name}}"
+            },
+            "display": "related-values",
+            "readonly": false,
+            "hidden": false,
+            "width": "full",
+            "required": true,
+            "note": "The collection this option belongs to",
+            "collection": "module_options",
+            "field": "collection"
+          },
+          "schema": {
+            "is_nullable": false,
+            "foreign_key_table": "module_collections",
+            "foreign_key_column": "id",
+            "on_update": "NO ACTION",
+            "on_delete": "CASCADE"
+          }
+        },
+        {
+          "field": "label",
+          "type": "string",
+          "meta": {
+            "interface": "input",
+            "options": {
+              "trim": true
+            },
+            "display": "formatted-value",
+            "readonly": false,
+            "hidden": false,
+            "width": "full",
+            "required": true,
+            "note": "The text of the option"
+          },
+          "schema": {
+            "is_nullable": false,
+            "is_unique": false,
+            "max_length": 255
+          }
+        },
+        {
+          "field": "weight",
+          "type": "float",
+          "meta": {
+            "interface": "input",
+            "display": "formatted-value",
+            "readonly": false,
+            "hidden": false,
+            "width": "half",
+            "required": false,
+            "note": "Weight for weighted selections (higher values = higher probability)"
+          },
+          "schema": {
+            "is_nullable": true,
+            "default_value": 1
+          }
+        },
+        {
+          "field": "sort",
+          "type": "integer",
+          "meta": {
+            "interface": "input",
+            "display": "raw",
+            "special": ["sort"],
+            "readonly": false,
+            "hidden": true,
+            "width": "full",
+            "required": false
+          },
+          "schema": {
+            "is_nullable": true
+          }
+        }
+      ]
+    }
+  ]
+}
