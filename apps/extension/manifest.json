@@ -1,0 +1,16 @@
+{
+  "manifest_version": 3,
+  "name": "Turbo Modern Starter Module",
+  "description": "Spin the wheel directly from your browser!",
+  "version": "0.1.0",
+  "action": {
+    "default_popup": "index.html",
+    "default_title": "Open Module"
+  },
+  "permissions": [],
+  "icons": {
+    "16": "icon-16.png",
+    "48": "icon-48.png",
+    "128": "icon-128.png"
+  }
+}
