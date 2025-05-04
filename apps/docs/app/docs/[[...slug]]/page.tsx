@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
-import { allDocs } from '@/lib/source';
+
 import { MDXContent } from '@/lib/mdx-content';
-import { getPage } from '@/lib/source';
+import { allDocs, getPage } from '@/lib/source';
 
 interface PageProps {
   params: {
