@@ -1,6 +1,5 @@
-import { defineConfig } from 'fumadocs-ui/config';
-
-export default defineConfig({
+// Simple configuration for the docs app
+export default {
   name: 'Turbo Modern Starter',
   github: {
     repo: 'codingbutterbot/turbo-modern-starter',
@@ -11,4 +10,4 @@ export default defineConfig({
       dark: 'rgb(96, 165, 250)',
     },
   },
-});
+};

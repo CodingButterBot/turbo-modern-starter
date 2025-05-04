@@ -1,7 +1,6 @@
-import { defineConfig as defineDocsConfig } from 'fumadocs-core/config';
-
-export const defineConfig = defineDocsConfig({
+// Simple docs configuration
+export const defineConfig = {
   baseUrl: '/docs',
   rootDir: './content/docs',
   name: 'docs'
-});
+};

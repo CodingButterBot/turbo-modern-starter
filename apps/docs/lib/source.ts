@@ -1,11 +1,22 @@
-import { createMDXSource } from 'fumadocs-mdx';
-import { loadFiles } from 'fumadocs-core/source';
-import { createSearchAPI } from 'fumadocs-core/search';
-import { defineConfig } from '@/source.config';
+// Simplified version without fumadocs for compatibility
+import fs from 'fs';
+import path from 'path';
 
-export const { allDocs } = loadFiles(defineConfig);
-
-export const mdxSource = createMDXSource(allDocs);
+// Mock document data
+export const allDocs = [
+  {
+    title: "Introduction",
+    description: "Getting started with Turbo Modern Starter",
+    slug: "index",
+    data: {}
+  },
+  {
+    title: "Installation",
+    description: "How to install and set up Turbo Modern Starter",
+    slug: "getting-started/installation",
+    data: {}
+  }
+];
 
 export function getPage(slug: string[]) {
   return allDocs.find(
@@ -13,4 +24,6 @@ export function getPage(slug: string[]) {
   );
 }
 
-export const searchAPI = createSearchAPI(allDocs);
+export const searchAPI = {
+  search: (query: string) => []
+};

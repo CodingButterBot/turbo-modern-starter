@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
-import { allDocs } from 'fumadocs-core/source';
-import { MDXContent } from 'fumadocs-mdx/mdx-content';
+import { allDocs } from '@/lib/source';
+import { MDXContent } from '@/lib/mdx-content';
 import { getPage } from '@/lib/source';
 
 interface PageProps {
