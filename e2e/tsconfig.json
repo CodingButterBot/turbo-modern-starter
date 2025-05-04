@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"]
+    },
+    "target": "es2016",
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "jsx": "react-jsx",
+    "typeRoots": ["../node_modules/@types", "./node_modules/@types"],
+    "types": ["node", "@playwright/test"]
+  },
+  "include": ["**/*.ts"],
+  "exclude": ["node_modules"]
+}
