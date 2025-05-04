@@ -1,5 +1,5 @@
-import type { PageTree } from 'fumadocs-core';
-import { createConfig, getPageNav, Layout } from 'fumadocs-ui/layout';
+import type { PageTree } from 'fumadocs-core/types';
+import { createConfig } from 'fumadocs-ui/dist/layout';
 import { pageTree } from '@/lib/source';
 
 export const config = createConfig({

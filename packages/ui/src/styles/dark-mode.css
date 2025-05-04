@@ -1,0 +1,44 @@
+/* Base dark mode styles */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* Light mode (default) */
+  :root {
+    --color-bg: theme('colors.background.light');
+    --color-text: theme('colors.text.light');
+    --color-surface: theme('colors.surface.light');
+    --color-border: theme('colors.border.light');
+  }
+
+  /* Dark mode */
+  .dark {
+    --color-bg: theme('colors.background.dark');
+    --color-text: theme('colors.text.dark');
+    --color-surface: theme('colors.surface.dark');
+    --color-border: theme('colors.border.dark');
+  }
+}
+
+@layer components {
+  /* Common components with dark mode support */
+  .card {
+    @apply bg-white dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-lg shadow-sm;
+  }
+
+  .btn-primary {
+    @apply bg-primary-600 hover:bg-primary-700 text-white;
+  }
+
+  .btn-secondary {
+    @apply bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-900 dark:text-gray-100;
+  }
+}
+
+@layer utilities {
+  /* Dark mode transition */
+  .theme-transition {
+    @apply transition-colors duration-200;
+  }
+}
