@@ -1,0 +1,2 @@
+# Ignore test files for now
+app/__tests__/**/*
