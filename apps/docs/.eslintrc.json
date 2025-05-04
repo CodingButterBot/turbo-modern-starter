@@ -1,0 +1,6 @@
+{
+  "extends": ["next", "eslint:recommended", "plugin:@typescript-eslint/recommended"],
+  "rules": {
+    "react/no-unescaped-entities": "off"
+  }
+}
