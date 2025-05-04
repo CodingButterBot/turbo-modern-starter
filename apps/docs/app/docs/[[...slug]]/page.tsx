@@ -1,6 +1,6 @@
-import { MDXContent } from 'fumadocs-mdx/runtime/async';
 import { notFound } from 'next/navigation';
 import { getPage, getPages } from '@/lib/source';
+import { MDXRemote } from '@fumadocs/mdx-remote';
 
 interface Props {
   params: {
@@ -15,7 +15,11 @@ export default function Page({ params }: Props) {
     notFound();
   }
 
-  return <MDXContent {...page} />;
+  return (
+    <div className="mdx-content">
+      <MDXRemote source={page.body} />
+    </div>
+  );
 }
 
 export function generateStaticParams() {
