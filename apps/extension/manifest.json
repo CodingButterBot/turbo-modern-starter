@@ -4,17 +4,30 @@
   "version": "0.0.1",
   "description": "A browser extension built with the Turbo Modern Starter",
   "action": {
-    "default_popup": "index.html",
+    "default_popup": "popup.html",
     "default_icon": {
-      "16": "public/icon-16.png",
-      "48": "public/icon-48.png",
-      "128": "public/icon-128.png"
+      "16": "icon-16.png",
+      "48": "icon-48.png",
+      "128": "icon-128.png"
     }
   },
   "icons": {
-    "16": "public/icon-16.png",
-    "48": "public/icon-48.png",
-    "128": "public/icon-128.png"
+    "16": "icon-16.png",
+    "48": "icon-48.png",
+    "128": "icon-128.png"
   },
-  "permissions": []
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "permissions": [
+    "storage",
+    "tabs"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"]
+    }
+  ]
 }
