@@ -1,9 +1,9 @@
-import { withFumadocs } from 'fumadocs-core/next/config';
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
   transpilePackages: ['@repo/ui'],
+  // Manually configure MDX without using withFumadocs
+  pageExtensions: ['js', 'jsx', 'ts', 'tsx', 'md', 'mdx'],
 };
 
-export default withFumadocs(nextConfig);
+export default nextConfig;
