@@ -5,7 +5,7 @@ import React from 'react';
 export const MDXContent = ({ code }: { code: unknown }) => {
   return (
     <div className="prose dark:prose-invert max-w-none">
-      {code && <p>MDX Content would render here</p>}
+      {code ? <p>MDX Content would render here</p> : null}
     </div>
   );
 };
