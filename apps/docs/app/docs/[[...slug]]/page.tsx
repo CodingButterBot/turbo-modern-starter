@@ -1,4 +1,4 @@
-import { MDXContent } from 'fumadocs-mdx/dist/mdx-content';
+import { MDXContent } from 'fumadocs-mdx/runtime/async';
 import { notFound } from 'next/navigation';
 import { getPage, getPages } from '@/lib/source';
 

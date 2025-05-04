@@ -1,4 +1,4 @@
-import { defineConfig } from 'fumadocs-core/dist/config';
+import { defineConfig } from 'fumadocs-mdx/config';
 
 export default defineConfig({
   rootDir: 'content',
