@@ -15,8 +15,8 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <div className="flex">
-          <div className="w-64 bg-gray-100 min-h-screen p-4">
-            <h2 className="text-xl font-bold mb-4">Documentation</h2>
+          <div className="min-h-screen w-64 bg-gray-100 p-4">
+            <h2 className="mb-4 text-xl font-bold">Documentation</h2>
             <nav>
               <ul>
                 <li><a href="/docs" className="hover:underline">Home</a></li>

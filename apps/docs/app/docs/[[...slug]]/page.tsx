@@ -18,7 +18,7 @@ export default function Page({ params }: Props) {
 
   return (
     <div className="p-4">
-      <h1 className="text-3xl font-bold mb-4">{page.title}</h1>
+      <h1 className="mb-4 text-3xl font-bold">{page.title}</h1>
       <p className="mb-4 text-gray-600">{page.description}</p>
       <div dangerouslySetInnerHTML={{ __html: page.body }} />
     </div>
