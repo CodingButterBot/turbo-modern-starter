@@ -1,0 +1,64 @@
+---
+title: 'Installation'
+description: 'How to install and set up Turbo Modern Starter'
+---
+
+# Installation
+
+Follow these steps to get Turbo Modern Starter up and running on your machine.
+
+## Prerequisites
+
+Before you begin, make sure you have the following installed:
+
+- Node.js 18 or higher
+- pnpm 8 or higher
+- Git
+
+## Getting Started
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/your-username/turbo-modern-starter.git
+cd turbo-modern-starter
+```
+
+2. Install dependencies:
+
+```bash
+pnpm install
+```
+
+3. Start the development server:
+
+```bash
+pnpm dev
+```
+
+This will start all applications and packages in development mode. You can access the web app at [http://localhost:3000](http://localhost:3000) and the docs app at [http://localhost:3001](http://localhost:3001).
+
+## Project Structure
+
+The project is structured as follows:
+
+- `apps/` - Contains all applications
+  - `web/` - The main Next.js web application
+  - `docs/` - Documentation site
+  - `extension/` - Browser extension
+  - `directus/` - Directus CMS configuration
+- `packages/` - Contains shared packages
+  - `ui/` - Reusable UI components
+  - `eslint-config/` - Shared ESLint configuration
+  - `typescript-config/` - Shared TypeScript configuration
+  - And more...
+
+## Available Scripts
+
+- `pnpm dev` - Start all applications in development mode
+- `pnpm build` - Build all applications and packages
+- `pnpm lint` - Run ESLint across the entire project
+- `pnpm check-types` - Run TypeScript type checking
+- `pnpm test` - Run unit and integration tests
+- `pnpm e2e` - Run end-to-end tests using Playwright
+- `pnpm format` - Format code using Prettier
