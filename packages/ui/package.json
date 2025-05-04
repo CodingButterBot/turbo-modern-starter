@@ -11,7 +11,8 @@
     "lint": "eslint \"src/**/*.ts*\"",
     "type-check": "tsc --noEmit",
     "clean": "rm -rf .turbo node_modules",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:coverage": "vitest run"
   },
   "devDependencies": {
     "@repo/eslint-config": "*",

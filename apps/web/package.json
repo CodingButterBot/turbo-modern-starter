@@ -8,7 +8,9 @@
     "start": "next start",
     "lint": "next lint",
     "type-check": "tsc --noEmit",
-    "clean": "rm -rf .next .turbo node_modules"
+    "clean": "rm -rf .next .turbo node_modules",
+    "test": "echo \"No tests yet\"",
+    "test:coverage": "echo \"No tests yet\""
   },
   "dependencies": {
     "@repo/ui": "*",
