@@ -3,34 +3,12 @@
 // the custom matchers from jest-dom
 
 import '@testing-library/jest-dom';
+import type { TestingLibraryMatchers } from '@testing-library/jest-dom/matchers';
 
 declare module 'vitest' {
-  interface Assertion<T = any> {
-    toBeInTheDocument(): T;
-    toBeVisible(): T;
-    toBeInvalid(): T;
-    toBeValid(): T;
-    toBeRequired(): T;
-    toBeDisabled(): T;
-    toBeEnabled(): T;
-    toBeEmpty(): T;
-    toBeEmptyDOMElement(): T;
-    toBePartiallyChecked(): T;
-    toBeChecked(): T;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  interface Assertion<T = unknown> extends TestingLibraryMatchers<T, void> {
+    // Additional matchers not covered by TestingLibraryMatchers
     toBeInTheDoc(): T;
-    toHaveAccessibleDescription(expected?: string | RegExp): T;
-    toHaveAccessibleName(expected?: string | RegExp): T;
-    toHaveAttribute(name: string, expected?: string | RegExp): T;
-    toHaveClass(...classNames: string[]): T;
-    toHaveFocus(): T;
-    toHaveFormValues(expectedValues: Record<string, any>): T;
-    toHaveStyle(expected: Record<string, any>): T;
-    toHaveTextContent(expected: string | RegExp, options?: { normalizeWhitespace: boolean }): T;
-    toHaveValue(expected: string | string[] | number): T;
-    toHaveDisplayValue(expected: string | string[] | RegExp): T;
-    toBeChecked(): T;
-    toHaveFocus(): T;
-    toContainElement(element: HTMLElement | null): T;
-    toContainHTML(htmlText: string): T;
   }
 }

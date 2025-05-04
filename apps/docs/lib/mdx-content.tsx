@@ -1,7 +1,8 @@
 import React from 'react';
 
 // Simple MDX content component that renders the content
-export const MDXContent = ({ code }: { code: any }) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const MDXContent = ({ code }: { code: unknown }) => {
   return (
     <div className="prose dark:prose-invert max-w-none">
       {code && <p>MDX Content would render here</p>}
