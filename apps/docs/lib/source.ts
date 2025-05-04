@@ -1,9 +1,4 @@
-import { defineConfig } from 'fumadocs-mdx/config';
-import { createMDXSource } from 'fumadocs-mdx';
-import config from '../source.config';
-
-// Create source 
-const source = createMDXSource(config);
+// No need for fumadocs imports anymore
 
 // Simple implementation to replace fumadocs functions that need updates
 export const pageTree = { items: [] };
