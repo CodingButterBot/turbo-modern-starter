@@ -1,6 +1,5 @@
 import { notFound } from 'next/navigation';
 import { getPage, getPages } from '@/lib/source';
-import { MDXRemote } from '@fumadocs/mdx-remote';
 
 interface Props {
   params: {
@@ -16,8 +15,10 @@ export default function Page({ params }: Props) {
   }
 
   return (
-    <div className="mdx-content">
-      <MDXRemote source={page.body} />
+    <div className="markdown-content">
+      <h1>{page.title}</h1>
+      <p>{page.description}</p>
+      <div dangerouslySetInnerHTML={{ __html: page.body }} />
     </div>
   );
 }

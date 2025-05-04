@@ -13,7 +13,7 @@ export function getPage(slug: string[]) {
   return {
     title: slug.join('/') || 'Home',
     description: 'Page description',
-    body: `# ${slug.join('/') || 'Home'}\n\nThis is a placeholder for the ${slug.join('/') || 'home'} page.`
+    body: `<h1>${slug.join('/') || 'Home'}</h1><p>This is a placeholder for the ${slug.join('/') || 'home'} page.</p>`
   };
 }
 
