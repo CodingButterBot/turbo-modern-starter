@@ -1,0 +1,2 @@
+# Ignore test files for now
+src/__tests__/**/*

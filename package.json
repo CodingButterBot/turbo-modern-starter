@@ -9,14 +9,18 @@
     "check-types": "turbo run type-check",
     "format": "prettier --write \"**/*.{ts,tsx,md,js,jsx,json}\"",
     "test": "turbo run test",
+    "test:coverage": "turbo run test:coverage",
     "e2e": "turbo run e2e",
     "clean": "turbo run clean && rm -rf node_modules"
   },
   "devDependencies": {
     "@playwright/test": "^1.52.0",
+    "@testing-library/jest-dom": "^6.6.3",
     "@types/node": "^20.17.32",
     "@typescript-eslint/eslint-plugin": "^7.1.1",
     "@typescript-eslint/parser": "^7.1.1",
+    "@vitejs/plugin-react": "^4.4.1",
+    "@vitest/coverage-v8": "^3.1.2",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-import": "^2.29.1",
@@ -24,6 +28,7 @@
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-tailwindcss": "^3.14.1",
+    "jsdom": "^26.1.0",
     "prettier": "^3.2.5",
     "turbo": "^2.0.1",
     "typescript": "^5.3.3"
