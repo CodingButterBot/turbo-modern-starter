@@ -1,0 +1,235 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - production
+          - staging
+
+# Prevent concurrent deployments
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build Applications
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 8
+          run_install: false
+      
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+      
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+      
+      - name: Install dependencies
+        run: pnpm install
+      
+      - name: Lint
+        run: pnpm lint
+      
+      - name: Type check
+        run: pnpm check-types
+      
+      - name: Build
+        run: pnpm build
+      
+      - name: Cache build output
+        uses: actions/cache@v4
+        with:
+          path: |
+            apps/web/.next
+            apps/docs/.next
+            packages/ui/dist
+          key: ${{ runner.os }}-build-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-build-
+      
+      - name: Upload web app build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-app-build
+          path: apps/web/.next
+          retention-days: 1
+      
+      - name: Upload docs build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: docs-build
+          path: apps/docs/.next
+          retention-days: 1
+      
+      - name: Package browser extension
+        if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
+        run: |
+          cd apps/extension
+          pnpm run build
+          mkdir -p dist-zip
+          zip -r dist-zip/extension.zip dist
+      
+      - name: Upload extension artifact
+        if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
+        uses: actions/upload-artifact@v4
+        with:
+          name: browser-extension
+          path: apps/extension/dist-zip
+          retention-days: 7
+  
+  deploy-web:
+    name: Deploy Web App
+    needs: build
+    runs-on: ubuntu-latest
+    environment: 
+      name: ${{ github.event.inputs.environment || 'production' }}
+      url: ${{ steps.deploy.outputs.url }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: web-app-build
+          path: apps/web/.next
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 8
+          run_install: false
+      
+      - name: Install Vercel CLI
+        run: npm install -g vercel
+      
+      - name: Deploy to Vercel
+        id: deploy
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_WEB_PROJECT_ID }}
+        run: |
+          if [[ "${{ github.event.inputs.environment }}" == "staging" || "${{ github.ref != 'refs/heads/main' && !startsWith(github.ref, 'refs/tags/v') }}" ]]; then
+            echo "Deploying to preview environment..."
+            DEPLOYMENT_URL=$(vercel deploy --cwd apps/web --token ${VERCEL_TOKEN} --yes)
+            echo "url=${DEPLOYMENT_URL}" >> $GITHUB_OUTPUT
+          else
+            echo "Deploying to production environment..."
+            DEPLOYMENT_URL=$(vercel deploy --cwd apps/web --token ${VERCEL_TOKEN} --prod --yes)
+            echo "url=${DEPLOYMENT_URL}" >> $GITHUB_OUTPUT
+          fi
+
+  deploy-docs:
+    name: Deploy Documentation
+    needs: build
+    runs-on: ubuntu-latest
+    environment: 
+      name: ${{ github.event.inputs.environment || 'production' }}
+      url: ${{ steps.deploy.outputs.url }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: docs-build
+          path: apps/docs/.next
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 8
+          run_install: false
+      
+      - name: Install Vercel CLI
+        run: npm install -g vercel
+      
+      - name: Deploy to Vercel
+        id: deploy
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_DOCS_PROJECT_ID }}
+        run: |
+          if [[ "${{ github.event.inputs.environment }}" == "staging" || "${{ github.ref != 'refs/heads/main' && !startsWith(github.ref, 'refs/tags/v') }}" ]]; then
+            echo "Deploying to preview environment..."
+            DEPLOYMENT_URL=$(vercel deploy --cwd apps/docs --token ${VERCEL_TOKEN} --yes)
+            echo "url=${DEPLOYMENT_URL}" >> $GITHUB_OUTPUT
+          else
+            echo "Deploying to production environment..."
+            DEPLOYMENT_URL=$(vercel deploy --cwd apps/docs --token ${VERCEL_TOKEN} --prod --yes)
+            echo "url=${DEPLOYMENT_URL}" >> $GITHUB_OUTPUT
+          fi
+
+  publish-extension:
+    name: Publish Extension
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Download extension artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: browser-extension
+          path: extension-artifact
+      
+      - name: Create GitHub Release
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: extension-artifact/extension.zip
+          name: Release ${{ github.ref_name }}
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+          token: ${{ secrets.GITHUB_TOKEN }}
