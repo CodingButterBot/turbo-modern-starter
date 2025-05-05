@@ -6,15 +6,15 @@ This document explains how to update the status of items in the GitHub project b
 
 After reviewing the project board, the following items have been identified with missing status values:
 
-| Number | Title | Current Status | Recommended Status |
-|--------|-------|----------------|-------------------|
-| #61 | Implement extension UI component library | (none) | In Progress |
-| #62 | Add i18n support to browser extension | (none) | Todo |
-| #63 | Implement extension data synchronization | (none) | Todo |
-| #64 (PR) | Implement extension UI component library | (none) | Pending Review |
-| #65 | Standardize GitHub project workflow | (none) | In Progress |
-| #66 (PR) | Add GitHub project workflow guidelines | (none) | Pending Review |
-| #67 (PR) | Add GitHub project management automation | (none) | Pending Review |
+| Number | Title | Current Status | Recommended Status | Justification |
+|--------|-------|----------------|-------------------|---------------|
+| #61 | Implement extension UI component library | (none) | Done | Implementation is complete and PR #64 has been submitted |
+| #62 | Add i18n support to browser extension | (none) | Todo | Work hasn't started yet but is planned |
+| #63 | Implement extension data synchronization | (none) | Todo | Work hasn't started yet but is planned |
+| #64 (PR) | Implement extension UI component library | (none) | Pending Review | PR is submitted and waiting for review |
+| #65 | Standardize GitHub project workflow | (none) | In Progress | Work has started with PR #66 but more tasks remain |
+| #66 (PR) | Add GitHub project workflow guidelines | (none) | Pending Review | PR is submitted and waiting for review |
+| #67 (PR) | Add GitHub project management automation | (none) | Pending Review | PR is submitted and waiting for review |
 
 ## Updating Status Values
 

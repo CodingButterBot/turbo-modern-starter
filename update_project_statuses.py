@@ -25,25 +25,25 @@ STATUS_OPTIONS = {
 
 # Item IDs and desired statuses
 ITEMS_TO_UPDATE = {
-    # Issue #61 (UI component library)
-    "PVTI_lAHODHqkes4A4KTrzgZ_xhs": "in_progress",
+    # Issue #61 (UI component library) - Work is done, PR is submitted
+    "PVTI_lAHODHqkes4A4KTrzgZ_xhs": "done",
     
-    # Issue #62 (i18n support)
+    # Issue #62 (i18n support) - Not started yet
     "PVTI_lAHODHqkes4A4KTrzgZ_xh4": "todo",
     
-    # Issue #63 (Data sync)
+    # Issue #63 (Data sync) - Not started yet
     "PVTI_lAHODHqkes4A4KTrzgZ_xh8": "todo",
     
-    # PR #64 (UI component library)
+    # PR #64 (UI component library) - Waiting for review
     "PVTI_lAHODHqkes4A4KTrzgZ_xvM": "review",
     
-    # Issue #65 (GitHub workflow)
+    # Issue #65 (GitHub workflow) - Currently being worked on
     "PVTI_lAHODHqkes4A4KTrzgZ_x1M": "in_progress",
     
-    # PR #66 (GitHub workflow guidelines)
+    # PR #66 (GitHub workflow guidelines) - Waiting for review
     "PVTI_lAHODHqkes4A4KTrzgZ_x1o": "review",
     
-    # PR #67 (GitHub project automation)
+    # PR #67 (GitHub project automation) - Waiting for review
     "PVTI_lAHODHqkes4A4KTrzgZ_yQc": "review"
 }
 
