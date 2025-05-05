@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { Button } from '@repo/ui';
 
 export default function Home() {
@@ -9,8 +10,12 @@ export default function Home() {
           A cutting-edge monorepo starter with TypeScript, Next.js, Tailwind CSS, Directus CMS, Turborepo, Vitest, Playwright, and GitHub Actions.
         </p>
         <div className="flex flex-row justify-center gap-4">
-          <Button>Get Started</Button>
-          <Button variant="outline">Documentation</Button>
+          <Link href="/module">
+            <Button>Try Module Demo</Button>
+          </Link>
+          <a href="https://github.com/CodingButterBot/turbo-modern-starter" target="_blank" rel="noopener noreferrer">
+            <Button variant="outline">View on GitHub</Button>
+          </a>
         </div>
       </div>
     </main>
