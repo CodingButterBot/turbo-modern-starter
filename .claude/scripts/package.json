@@ -1,0 +1,18 @@
+{
+  "name": "project-management-scripts",
+  "version": "1.0.0",
+  "description": "Scripts for managing GitHub projects",
+  "private": true,
+  "main": "update-project-statuses.js",
+  "scripts": {
+    "update-statuses": "node update-project-statuses.js",
+    "verify-statuses": "node verify-project-statuses.js",
+    "update-priorities": "node update-project-priorities.js",
+    "cleanup-board": "node cleanup-project-board.js",
+    "generate-badges": "node generate-workflow-badges.js"
+  },
+  "dependencies": {
+    "@octokit/graphql": "^7.0.2",
+    "dotenv": "^16.3.2"
+  }
+}
