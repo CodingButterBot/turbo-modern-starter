@@ -6,17 +6,40 @@ This directory contains tools and scripts created by Claude to help manage the r
 
 - `scripts/` - Contains executable scripts for various maintenance tasks
   - `update-project-statuses.js` - Updates GitHub project item statuses via GraphQL API
+  - `verify-project-statuses.js` - Checks current status values against expected values
+- `github-project-management.md` - Documentation for GitHub project management
+
+## Available Scripts
+
+### Project Status Management
+
+1. **Verify Project Statuses**
+   
+   This script checks the current status values of GitHub project items against expected values and reports any inconsistencies.
+   
+   ```bash
+   node .claude/scripts/verify-project-statuses.js
+   ```
+
+2. **Update Project Statuses**
+   
+   This script updates the status values of GitHub project items to match the expected values.
+   
+   ```bash
+   node .claude/scripts/update-project-statuses.js
+   ```
 
 ## Usage
 
 Scripts in this directory are designed to be run from the repository root:
 
 ```bash
-# Make scripts executable if needed
+# Make scripts executable if needed (first time only)
 chmod +x .claude/scripts/update-project-statuses.js
+chmod +x .claude/scripts/verify-project-statuses.js
 
 # Run a script
-node .claude/scripts/update-project-statuses.js
+node .claude/scripts/verify-project-statuses.js
 ```
 
 ## Adding New Scripts

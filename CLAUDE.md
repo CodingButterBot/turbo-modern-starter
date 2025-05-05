@@ -32,6 +32,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 The `.claude/` directory contains useful scripts and tools for repository management:
 
 - `.claude/scripts/update-project-statuses.js` - Updates GitHub project item statuses
+- `.claude/scripts/verify-project-statuses.js` - Checks current status values against expected values
 - Check the `.claude/README.md` file for detailed documentation on available tools
+
+### GitHub Project Management
+Before starting new development work:
+1. Verify project statuses: `node .claude/scripts/verify-project-statuses.js`
+2. Update statuses if needed: `node .claude/scripts/update-project-statuses.js`
+3. Refer to `.claude/github-project-management.md` for detailed guidelines
 
 **IMPORTANT**: Always use the tools in the `.claude/` directory for repository management tasks rather than creating scripts in the root directory. Keep all helper scripts organized in this dedicated location.
