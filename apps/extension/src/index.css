@@ -2,10 +2,52 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Default light theme variables */
+:root {
+  --bg-color: #f9fafb;
+  --text-color: #1f2937;
+  --border-color: #d1d5db;
+  --input-bg: #ffffff;
+  --placeholder-color: #9ca3af;
+}
+
+/* Dark theme variables */
+.dark {
+  --bg-color: #111827;
+  --text-color: #f3f4f6;
+  --border-color: #374151;
+  --input-bg: #1f2937;
+  --placeholder-color: #6b7280;
+}
+
+/* Apply theme with transitions */
+html, body {
+  transition-property: background-color, color, border-color;
+  transition-duration: 150ms;
+  transition-timing-function: ease-in-out;
+}
+
 body {
   min-width: 320px;
   min-height: 200px;
-  background-color: #f9fafb;
+  background-color: var(--bg-color);
   margin: 0;
   padding: 0;
+  color: var(--text-color);
+}
+
+.dark body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
+input, select, textarea {
+  color: var(--text-color);
+  background-color: var(--input-bg);
+  border-color: var(--border-color);
+  transition: background-color 150ms ease-in-out, color 150ms ease-in-out, border-color 150ms ease-in-out;
+}
+
+input::placeholder {
+  color: var(--placeholder-color);
 }

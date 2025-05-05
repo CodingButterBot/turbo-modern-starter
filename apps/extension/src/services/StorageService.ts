@@ -19,6 +19,11 @@ export interface ExtensionSettings {
   // Account settings
   isLoggedIn: boolean;
   
+  // Authentication tokens
+  directusAccessToken: string | null;
+  directusRefreshToken: string | null;
+  directusTokenExpiration: number | null;
+  
   // Advanced settings
   debugging: boolean;
   syncFrequency: boolean;
@@ -40,13 +45,19 @@ export const DEFAULT_SETTINGS: ExtensionSettings = {
   // Account settings
   isLoggedIn: false,
   
+  // Authentication tokens
+  directusAccessToken: null,
+  directusRefreshToken: null,
+  directusTokenExpiration: null,
+  
   // Advanced settings
   debugging: false,
   syncFrequency: false
 };
 
 // Determine if we should use sync or local storage
-const shouldUseSync = true; // Set to false to force local storage
+// IMPORTANT: We're using local storage to avoid quota issues
+const shouldUseSync = false;
 
 // Type for the chrome storage change events
 type StorageChangeListener = (changes: { [key: string]: chrome.storage.StorageChange }) => void;
@@ -171,11 +182,18 @@ class StorageService {
    * @returns Promise that resolves when the operation is complete
    */
   public async set(items: Partial<ExtensionSettings>): Promise<void> {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       const storage = this.getStorageArea();
       if (storage) {
         storage.set(items, () => {
-          resolve();
+          // Check for error
+          const err = chrome.runtime.lastError;
+          if (err) {
+            console.warn('Chrome storage error:', err.message);
+            reject(err);
+          } else {
+            resolve();
+          }
         });
       } else {
         // Development fallback

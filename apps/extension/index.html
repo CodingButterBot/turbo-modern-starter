@@ -4,8 +4,31 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Turbo Modern Starter Extension</title>
+    <!-- Initial dark mode script to prevent flash -->
+    <script>
+      // Check for user's theme preference
+      const darkModePreference = localStorage.getItem('themePreference');
+      
+      // Apply dark mode if:
+      // 1. User explicitly set dark mode, or
+      // 2. User prefers system setting and system is dark
+      if (
+        darkModePreference === 'dark' || 
+        (darkModePreference === 'system' && 
+         window.matchMedia('(prefers-color-scheme: dark)').matches)
+      ) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+      
+      console.log('Initial theme applied:', {
+        storedPreference: darkModePreference,
+        isDark: document.documentElement.classList.contains('dark')
+      });
+    </script>
   </head>
-  <body>
+  <body class="w-full min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors duration-150">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

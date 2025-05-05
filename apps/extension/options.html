@@ -1,20 +1,30 @@
 <!DOCTYPE html>
-<html lang="en" class="light">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Extension Options</title>
+    <!-- Initial dark mode script to prevent flash -->
     <script>
-      // Check for dark mode preference
-      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        document.documentElement.classList.remove('light');
+      // Check for user's theme preference
+      const darkModePreference = localStorage.getItem('themePreference');
+      
+      // Apply dark mode if:
+      // 1. User explicitly set dark mode, or
+      // 2. User prefers system setting and system is dark
+      if (
+        darkModePreference === 'dark' || 
+        (darkModePreference === 'system' && 
+         window.matchMedia('(prefers-color-scheme: dark)').matches)
+      ) {
         document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
       }
       
-      // Listen for changes to color scheme preference
-      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
-        document.documentElement.classList.toggle('dark', event.matches);
-        document.documentElement.classList.toggle('light', !event.matches);
+      console.log('Initial theme applied:', {
+        storedPreference: darkModePreference,
+        isDark: document.documentElement.classList.contains('dark')
       });
     </script>
   </head>

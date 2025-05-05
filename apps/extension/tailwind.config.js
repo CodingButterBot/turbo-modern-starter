@@ -6,6 +6,7 @@ export default {
     "./sidepanel.html",
     "./src/**/*.{js,jsx,ts,tsx}"
   ],
+  darkMode: 'class', // This enables the 'dark' variant with class strategy
   theme: {
     extend: {},
   },
