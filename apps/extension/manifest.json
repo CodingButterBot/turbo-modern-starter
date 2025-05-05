@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Turbo Modern Starter Extension",
-  "version": "0.0.1",
-  "description": "A browser extension built with the Turbo Modern Starter",
+  "version": "0.1.0",
+  "description": "A browser extension built with the Turbo Modern Starter, featuring theme-aware UI components",
   "action": {
     "default_popup": "index.html",
     "default_icon": {
@@ -16,5 +16,16 @@
     "48": "public/icon-48.png",
     "128": "public/icon-128.png"
   },
-  "permissions": []
+  "permissions": ["storage"],
+  "host_permissions": [],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["src/content.js"]
+    }
+  ],
+  "background": {
+    "service_worker": "src/background.js",
+    "type": "module"
+  }
 }
