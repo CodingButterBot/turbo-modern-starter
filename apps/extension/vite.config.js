@@ -38,6 +38,24 @@ function extensionAssetsPlugin() {
           console.log('✅ Copied background.js to dist folder');
         }
 
+        // Create a public directory in dist if it doesn't exist
+        const distPublicDir = path.resolve(distDir, 'public');
+        if (!fs.existsSync(distPublicDir)) {
+          fs.mkdirSync(distPublicDir, { recursive: true });
+        }
+
+        // Copy logout.js from public directory to dist/public
+        const logoutJsPath = path.resolve(__dirname, 'public', 'logout.js');
+        const destLogoutJsPath = path.resolve(distPublicDir, 'logout.js');
+        if (fs.existsSync(logoutJsPath)) {
+          fs.copyFileSync(logoutJsPath, destLogoutJsPath);
+          // Also copy to root for backward compatibility
+          fs.copyFileSync(logoutJsPath, path.resolve(distDir, 'logout.js'));
+          console.log('✅ Copied logout.js to dist folder');
+        } else {
+          console.error('❌ logout.js not found in public directory');
+        }
+        
         // Copy icon files and other public assets
         const publicDir = path.resolve(__dirname, 'public');
         
@@ -150,5 +168,7 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     emptyOutDir: true
-  }
+  },
+  // Load environment variables from .env file
+  envPrefix: 'VITE_'
 });
