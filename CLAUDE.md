@@ -26,3 +26,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Repository Structure
 - `apps/` - Applications (web, extension, docs, directus)
 - `packages/` - Shared packages (ui, module, assets, config, etc.)
+- `.claude/` - Helper scripts and tools managed by Claude
+
+## Claude Helper Scripts
+The `.claude/` directory contains useful scripts and tools for repository management:
+
+- `.claude/scripts/update-project-statuses.js` - Updates GitHub project item statuses
+- Check the `.claude/README.md` file for detailed documentation on available tools
+
+**IMPORTANT**: Always use the tools in the `.claude/` directory for repository management tasks rather than creating scripts in the root directory. Keep all helper scripts organized in this dedicated location.
