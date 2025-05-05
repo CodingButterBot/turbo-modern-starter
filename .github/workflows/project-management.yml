@@ -1,0 +1,88 @@
+name: Project Management
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+  issues:
+    types: [opened, edited, closed, reopened]
+  workflow_dispatch:
+    inputs:
+      update-priorities:
+        description: 'Update priorities and statuses'
+        type: boolean
+        default: true
+
+jobs:
+  update-project-items:
+    name: Update Project Status
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm install @octokit/graphql dotenv
+
+      - name: Update Project Status
+        run: node .claude/scripts/update-project-statuses.js
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PROJECT_ID: "PVT_kwHODHqkes4A4KTr"
+          ORGANIZATION: "CodingButterBot"
+          REPOSITORY: "turbo-modern-starter"
+
+  update-project-priorities:
+    name: Update Project Priorities
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' && inputs.update-priorities
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm install @octokit/graphql dotenv
+
+      - name: Update Project Priorities
+        run: node .claude/scripts/update-project-priorities.js
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PROJECT_ID: "PVT_kwHODHqkes4A4KTr"
+          ORGANIZATION: "CodingButterBot"
+          REPOSITORY: "turbo-modern-starter"
+
+  verify-project-statuses:
+    name: Verify Project Statuses
+    runs-on: ubuntu-latest
+    needs: update-project-items
+    if: always()
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm install @octokit/graphql dotenv
+
+      - name: Verify Project Statuses
+        run: node .claude/scripts/verify-project-statuses.js
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PROJECT_ID: "PVT_kwHODHqkes4A4KTr"
+          ORGANIZATION: "CodingButterBot"
+          REPOSITORY: "turbo-modern-starter"

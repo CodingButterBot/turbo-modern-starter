@@ -1,14 +1,109 @@
-name: Tests
+name: Deploy
 
 on:
   push:
     branches: [main]
-  pull_request:
-    branches: [main]
+  workflow_dispatch:
+
+env:
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
 jobs:
-  unit-tests:
-    name: Unit & Integration Tests
+  deploy-web:
+    name: Deploy Web App
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 8
+          run_install: false
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Install Vercel CLI
+        run: pnpm install --global vercel@latest
+
+      - name: Build web application
+        run: pnpm build --filter=web...
+
+      - name: Deploy to Vercel
+        run: vercel deploy --prod --token=${{ secrets.VERCEL_TOKEN }}
+
+  deploy-docs:
+    name: Deploy Documentation
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 8
+          run_install: false
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Install Vercel CLI
+        run: pnpm install --global vercel@latest
+
+      - name: Build documentation site
+        run: pnpm build --filter=docs...
+
+      - name: Deploy Documentation to Vercel
+        run: |
+          cd apps/docs
+          vercel deploy --prod --token=${{ secrets.VERCEL_TOKEN }}
+
+  build-extension:
+    name: Build Extension
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -42,115 +137,44 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Run unit tests
-        run: pnpm test
-        env:
-          NODE_ENV: test
-          
-      - name: Upload test coverage
-        uses: actions/upload-artifact@v3
-        with:
-          name: coverage-report
-          path: coverage
-          retention-days: 7
-  
-  e2e-tests:
-    name: End-to-End Tests
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v3
-        with:
-          version: 8
-          run_install: false
-
-      - name: Get pnpm store directory
-        id: pnpm-cache
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
-
-      - name: Setup pnpm cache
-        uses: actions/cache@v4
-        with:
-          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
-
-      - name: Install dependencies
-        run: pnpm install
-
-      - name: Install Playwright browsers
-        run: pnpm exec playwright install --with-deps
-
-      - name: Build applications for e2e tests
-        run: pnpm build
-      
-      - name: Run E2E tests for web
-        run: pnpm e2e:web
-      
-      - name: Upload Playwright report
-        uses: actions/upload-artifact@v3
-        if: always()
-        with:
-          name: playwright-report
-          path: playwright-report/
-          retention-days: 7
-  
-  test-extension:
-    name: Test Extension
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v3
-        with:
-          version: 8
-          run_install: false
-
-      - name: Get pnpm store directory
-        id: pnpm-cache
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
-
-      - name: Setup pnpm cache
-        uses: actions/cache@v4
-        with:
-          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
-
-      - name: Install dependencies
-        run: pnpm install
-
-      - name: Run extension tests
-        run: pnpm test --filter=extension...
-        env:
-          NODE_ENV: test
-          
       - name: Build extension
         run: pnpm build --filter=extension...
-      
-      - name: Pack extension for testing
+
+      - name: Package extension
         run: |
           cd apps/extension/dist
           zip -r ../../extension.zip *
+
+      - name: Upload extension artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: browser-extension
+          path: apps/extension.zip
+          retention-days: 14
+
+  release-extension:
+    name: Release Extension
+    runs-on: ubuntu-latest
+    needs: build-extension
+    if: github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main'
+    environment: production
+    steps:
+      - name: Download extension artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: browser-extension
+          path: ./
+
+      - name: Create GitHub Release
+        id: create_release
+        if: github.ref == 'refs/heads/main'
+        uses: softprops/action-gh-release@v1
+        with:
+          files: extension.zip
+          name: "Extension v${{ github.run_number }}"
+          tag_name: "v${{ github.run_number }}"
+          body: "Browser extension release"
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -26,3 +26,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Repository Structure
 - `apps/` - Applications (web, extension, docs, directus)
 - `packages/` - Shared packages (ui, module, assets, config, etc.)
+- `.claude/` - Helper scripts and tools for project management
+  - `scripts/` - Contains automation scripts for GitHub project management
+  - See `.claude/README.md` for details on available tools
+
+## GitHub Project Management
+- Use the project management workflow to update item statuses and priorities
+- Run `gh workflow run project-management.yml` to update project statuses
+- For manual updates to priorities, run `gh workflow run project-management.yml -f update-priorities=true`
+- All helper scripts are located in `.claude/scripts/`
