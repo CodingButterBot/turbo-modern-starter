@@ -9,10 +9,14 @@ on:
     types: [opened, edited, closed, reopened]
   workflow_dispatch:
     inputs:
+      fix-board:
+        description: 'Fix project board status issues'
+        type: boolean
+        default: true
       cleanup-board:
         description: 'Perform comprehensive board cleanup'
         type: boolean
-        default: true
+        default: false
       update-priorities:
         description: 'Update priorities and statuses'
         type: boolean
@@ -36,6 +40,30 @@ jobs:
 
       - name: Update Project Status
         run: node .claude/scripts/update-project-statuses.js
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PROJECT_ID: "PVT_kwHODHqkes4A4KTr"
+          ORGANIZATION: "CodingButterBot"
+          REPOSITORY: "turbo-modern-starter"
+
+  fix-project-board:
+    name: Fix Project Board Status Issues
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' && inputs.fix-board
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm install @octokit/graphql dotenv
+
+      - name: Fix Board Status Issues
+        run: node .claude/scripts/fix-project-board.js
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PROJECT_ID: "PVT_kwHODHqkes4A4KTr"
@@ -93,7 +121,7 @@ jobs:
   verify-project-statuses:
     name: Verify Project Statuses
     runs-on: ubuntu-latest
-    needs: [update-project-items, cleanup-project-board]
+    needs: [update-project-items, fix-project-board, cleanup-project-board]
     if: always()
     steps:
       - name: Checkout Repository

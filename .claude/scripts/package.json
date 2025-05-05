@@ -9,6 +9,7 @@
     "verify-statuses": "node verify-project-statuses.js",
     "update-priorities": "node update-project-priorities.js",
     "cleanup-board": "node cleanup-project-board.js",
+    "fix-board": "node fix-project-board.js",
     "generate-badges": "node generate-workflow-badges.js"
   },
   "dependencies": {

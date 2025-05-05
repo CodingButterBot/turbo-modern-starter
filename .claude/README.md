@@ -57,6 +57,18 @@ node scripts/cleanup-project-board.js
 **Environment Variables:**
 Same as above.
 
+### Fix Project Board
+
+`scripts/fix-project-board.js` - Direct fix for project board issues, forcing all closed items to "Done" status and fixing incorrect statuses.
+
+**Usage:**
+```bash
+node scripts/fix-project-board.js
+```
+
+**Environment Variables:**
+Same as above.
+
 ### Generate Workflow Badges
 
 `scripts/generate-workflow-badges.js` - Creates GitHub Actions workflow status badges to display in README.md.
