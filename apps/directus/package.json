@@ -1,0 +1,15 @@
+{
+  "name": "directus-app",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "docker-compose up -d",
+    "stop": "docker-compose down",
+    "reset": "docker-compose down -v && docker-compose up -d",
+    "init": "node init.js",
+    "clean": "docker-compose down -v"
+  },
+  "dependencies": {
+    "@directus/sdk": "^11.0.0"
+  }
+}
