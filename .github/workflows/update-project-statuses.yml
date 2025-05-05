@@ -1,0 +1,258 @@
+name: Update Project Item Statuses
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run (don\'t actually update statuses)'
+        required: false
+        default: 'false'
+
+jobs:
+  update-statuses:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Set up GitHub CLI
+        run: |
+          # Install latest version
+          gh_cli_version="$(curl -s https://api.github.com/repos/cli/cli/releases/latest | jq -r '.tag_name' | sed 's/^v//')"
+          curl -sSL "https://github.com/cli/cli/releases/download/v${gh_cli_version}/gh_${gh_cli_version}_linux_amd64.tar.gz" -o gh-cli.tar.gz
+          tar -xzf gh-cli.tar.gz
+          sudo mv "gh_${gh_cli_version}_linux_amd64/bin/gh" /usr/local/bin/
+          rm -rf gh_${gh_cli_version}_linux_amd64 gh-cli.tar.gz
+      
+      - name: Update Project Statuses
+        if: ${{ github.event.inputs.dry_run != 'true' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.PROJECT_PAT }}
+        run: |
+          # Set Issue #61 (UI component library) - In Progress
+          gh api graphql -f query='mutation ($projectId: ID!, $itemId: ID!, $fieldId: ID!, $optionId: String!) { 
+            updateProjectV2ItemFieldValue(input: {
+              projectId: $projectId, 
+              itemId: $itemId, 
+              fieldId: $fieldId, 
+              value: { 
+                singleSelectOptionId: $optionId
+              }
+            }) { 
+              projectV2Item { 
+                id 
+              } 
+            } 
+          }' -f projectId="PVT_kwHODHqkes4A4KTr" -f itemId="PVTI_lAHODHqkes4A4KTrzgZ_xhs" -f fieldId="PVTSSF_lAHODHqkes4A4KTrzgtLOB4" -f optionId="47fc9ee4"
+          
+          # Set PR #64 (UI component library implementation) - Pending Review
+          gh api graphql -f query='mutation ($projectId: ID!, $itemId: ID!, $fieldId: ID!, $optionId: String!) { 
+            updateProjectV2ItemFieldValue(input: {
+              projectId: $projectId, 
+              itemId: $itemId, 
+              fieldId: $fieldId, 
+              value: { 
+                singleSelectOptionId: $optionId
+              }
+            }) { 
+              projectV2Item { 
+                id 
+              } 
+            } 
+          }' -f projectId="PVT_kwHODHqkes4A4KTr" -f itemId="PVTI_lAHODHqkes4A4KTrzgZ_xvM" -f fieldId="PVTSSF_lAHODHqkes4A4KTrzgtLOB4" -f optionId="a352001e"
+          
+          # Set Issue #62 (i18n support) - Todo
+          gh api graphql -f query='mutation ($projectId: ID!, $itemId: ID!, $fieldId: ID!, $optionId: String!) { 
+            updateProjectV2ItemFieldValue(input: {
+              projectId: $projectId, 
+              itemId: $itemId, 
+              fieldId: $fieldId, 
+              value: { 
+                singleSelectOptionId: $optionId
+              }
+            }) { 
+              projectV2Item { 
+                id 
+              } 
+            } 
+          }' -f projectId="PVT_kwHODHqkes4A4KTr" -f itemId="PVTI_lAHODHqkes4A4KTrzgZ_xh4" -f fieldId="PVTSSF_lAHODHqkes4A4KTrzgtLOB4" -f optionId="f75ad846"
+          
+          # Set Issue #63 (Data sync) - Todo
+          gh api graphql -f query='mutation ($projectId: ID!, $itemId: ID!, $fieldId: ID!, $optionId: String!) { 
+            updateProjectV2ItemFieldValue(input: {
+              projectId: $projectId, 
+              itemId: $itemId, 
+              fieldId: $fieldId, 
+              value: { 
+                singleSelectOptionId: $optionId
+              }
+            }) { 
+              projectV2Item { 
+                id 
+              } 
+            } 
+          }' -f projectId="PVT_kwHODHqkes4A4KTr" -f itemId="PVTI_lAHODHqkes4A4KTrzgZ_xh8" -f fieldId="PVTSSF_lAHODHqkes4A4KTrzgtLOB4" -f optionId="f75ad846"
+          
+          # Set Issue #65 (GitHub workflow) - In Progress
+          gh api graphql -f query='mutation ($projectId: ID!, $itemId: ID!, $fieldId: ID!, $optionId: String!) { 
+            updateProjectV2ItemFieldValue(input: {
+              projectId: $projectId, 
+              itemId: $itemId, 
+              fieldId: $fieldId, 
+              value: { 
+                singleSelectOptionId: $optionId
+              }
+            }) { 
+              projectV2Item { 
+                id 
+              } 
+            } 
+          }' -f projectId="PVT_kwHODHqkes4A4KTr" -f itemId="PVTI_lAHODHqkes4A4KTrzgZ_x1M" -f fieldId="PVTSSF_lAHODHqkes4A4KTrzgtLOB4" -f optionId="47fc9ee4"
+          
+          # Set PR #66 (GitHub workflow guidelines) - Pending Review
+          gh api graphql -f query='mutation ($projectId: ID!, $itemId: ID!, $fieldId: ID!, $optionId: String!) { 
+            updateProjectV2ItemFieldValue(input: {
+              projectId: $projectId, 
+              itemId: $itemId, 
+              fieldId: $fieldId, 
+              value: { 
+                singleSelectOptionId: $optionId
+              }
+            }) { 
+              projectV2Item { 
+                id 
+              } 
+            } 
+          }' -f projectId="PVT_kwHODHqkes4A4KTr" -f itemId="PVTI_lAHODHqkes4A4KTrzgZ_x1o" -f fieldId="PVTSSF_lAHODHqkes4A4KTrzgtLOB4" -f optionId="a352001e"
+          
+      - name: Create PR Template
+        run: |
+          mkdir -p .github/PULL_REQUEST_TEMPLATE
+          cat > .github/PULL_REQUEST_TEMPLATE/default.md << 'EOL'
+          ## Summary
+          <!-- Provide a brief summary of the changes in this PR -->
+
+          ## Changes
+          <!-- List the specific changes made in this PR -->
+          - [ ] Change 1
+          - [ ] Change 2
+          - [ ] Change 3
+
+          ## Test Plan
+          <!-- Describe how you tested these changes -->
+          - [ ] Test step 1
+          - [ ] Test step 2
+          - [ ] Test step 3
+
+          ## Status
+          <!-- Indicate the current status of this PR -->
+          - [ ] Ready for review
+          - [ ] Draft / Work in progress
+          - [ ] Dependencies on other PRs
+
+          <!-- Link to the issue(s) this PR addresses -->
+          Closes #XX
+
+          <!-- Generated with guidance from GITHUB_WORKFLOW.md -->
+          EOL
+      
+      - name: Create Issue Template
+        run: |
+          mkdir -p .github/ISSUE_TEMPLATE
+          cat > .github/ISSUE_TEMPLATE/feature.md << 'EOL'
+          ---
+          name: Feature Request
+          about: Request a new feature or enhancement
+          title: ''
+          labels: enhancement
+          assignees: ''
+          ---
+
+          ## Description
+          <!-- Provide a clear description of the feature -->
+
+          ## Requirements
+          <!-- List the specific requirements for this feature -->
+          - [ ] Requirement 1
+          - [ ] Requirement 2
+          - [ ] Requirement 3
+
+          ## Technical Details
+          <!-- Provide any technical details or considerations -->
+
+          ## Acceptance Criteria
+          <!-- List the criteria that must be met for this to be considered complete -->
+          - [ ] Criteria 1
+          - [ ] Criteria 2
+          - [ ] Criteria 3
+
+          ## Status
+          <!-- Current status of this issue, will be updated as work progresses -->
+          EOL
+          
+          cat > .github/ISSUE_TEMPLATE/bug.md << 'EOL'
+          ---
+          name: Bug Report
+          about: Report a bug or issue
+          title: ''
+          labels: bug
+          assignees: ''
+          ---
+
+          ## Description
+          <!-- Describe the bug -->
+
+          ## Steps to Reproduce
+          <!-- Provide clear steps to reproduce the issue -->
+          1. 
+          2. 
+          3. 
+
+          ## Expected Behavior
+          <!-- What should happen? -->
+
+          ## Actual Behavior
+          <!-- What actually happens? -->
+
+          ## Environment
+          <!-- Include relevant details about your environment -->
+          - OS: 
+          - Browser:
+          - Version:
+
+          ## Screenshots
+          <!-- If applicable, add screenshots to help explain your problem -->
+
+          ## Possible Solution
+          <!-- Optional: suggest a fix or reason for the bug -->
+          EOL
+      
+      - name: Create Pull Request for Templates
+        if: ${{ github.event.inputs.dry_run != 'true' }}
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git checkout -b feature/add-issue-pr-templates
+          git add .github/
+          git commit -m "Add PR and Issue templates for standardized workflow" -m "- Add default PR template with checklist format" -m "- Add feature request template with requirements and acceptance criteria" -m "- Add bug report template with clear structure" -m "" -m "Part of the GitHub workflow standardization effort (Issue #65)"
+          git push origin feature/add-issue-pr-templates
+          gh pr create --title "Add PR and Issue templates" --body "## Summary
+          - Add standardized templates for PRs and Issues
+          - Implement checklist format for all templates
+          - Support workflow standardization efforts
+
+          ## Changes
+          - [x] Add default PR template
+          - [x] Add feature request template
+          - [x] Add bug report template
+          - [x] Use consistent checklist format across all templates
+
+          ## Test Plan
+          - [x] Verify templates follow format described in GITHUB_WORKFLOW.md
+          - [x] Ensure all templates include checklist format
+          - [ ] Create test PR/issues to verify templates load correctly
+
+          Closes #65" --head feature/add-issue-pr-templates
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
