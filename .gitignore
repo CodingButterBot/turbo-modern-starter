@@ -134,3 +134,20 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# Turbo
+.turbo/
+
+# Extension builds
+apps/extension/extension.zip
+
+# Claude AI scripts and settings
+.claude/scripts/
+
+# Temporary directories
+tmp/
+
+# package-lock files in monorepo (using pnpm)
+package-lock.json
+apps/*/package-lock.json
+packages/*/package-lock.json
