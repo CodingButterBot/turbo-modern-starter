@@ -1,61 +1,14 @@
-import { defineConfig, UserConfig } from 'vite';
+import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { resolve } from 'path';
 import fs from 'fs';
 import path from 'path';
-import { visualizer } from 'rollup-plugin-visualizer';
 import type { Plugin } from 'vite';
-
-// Determine if we're in production mode
-const isProd = process.env.NODE_ENV === 'production';
 
 // Extension file copying plugin
 function extensionAssetsPlugin(): Plugin {
   return {
     name: 'extension-assets',
-    
-    // Handle manifest.json updates at build time (e.g., applying version from package.json)
-    async buildStart() {
-      try {
-        const manifestPath = path.resolve(__dirname, 'manifest.json');
-        
-        if (fs.existsSync(manifestPath)) {
-          const packageJsonPath = path.resolve(__dirname, 'package.json');
-          const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
-          
-          // Read the manifest file
-          const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
-          
-          // Update the version from package.json
-          manifest.version = packageJson.version;
-          
-          // Add environment-specific configurations
-          if (isProd) {
-            // Production-specific settings
-            if (!manifest.content_security_policy) {
-              manifest.content_security_policy = {
-                extension_pages: "script-src 'self'; object-src 'self'"
-              };
-            }
-          } else {
-            // Development-specific settings
-            if (!manifest.content_security_policy) {
-              manifest.content_security_policy = {
-                extension_pages: "script-src 'self' 'unsafe-eval'; object-src 'self'"
-              };
-            }
-          }
-
-          // Write the updated manifest back
-          fs.writeFileSync(
-            manifestPath, 
-            JSON.stringify(manifest, null, 2)
-          );
-        }
-      } catch (error) {
-        console.error('Error updating manifest.json:', error);
-      }
-    },
     
     // Copy extension files to dist folder after build
     closeBundle() {
@@ -77,17 +30,33 @@ function extensionAssetsPlugin(): Plugin {
           console.error('❌ manifest.json not found');
         }
         
-        // Copy background.js to dist folder
+        // Copy background.js to dist folder if it exists
         const backgroundPath = path.resolve(__dirname, 'background.js');
         const destBackgroundPath = path.resolve(distDir, 'background.js');
         
         if (fs.existsSync(backgroundPath)) {
           fs.copyFileSync(backgroundPath, destBackgroundPath);
           console.log('✅ Copied background.js to dist folder');
-        } else {
-          console.error('❌ background.js not found');
         }
 
+        // Create a public directory in dist if it doesn't exist
+        const distPublicDir = path.resolve(distDir, 'public');
+        if (!fs.existsSync(distPublicDir)) {
+          fs.mkdirSync(distPublicDir, { recursive: true });
+        }
+
+        // Copy logout.js from public directory to dist/public
+        const logoutJsPath = path.resolve(__dirname, 'public', 'logout.js');
+        const destLogoutJsPath = path.resolve(distPublicDir, 'logout.js');
+        if (fs.existsSync(logoutJsPath)) {
+          fs.copyFileSync(logoutJsPath, destLogoutJsPath);
+          // Also copy to root for backward compatibility
+          fs.copyFileSync(logoutJsPath, path.resolve(distDir, 'logout.js'));
+          console.log('✅ Copied logout.js to dist folder');
+        } else {
+          console.error('❌ logout.js not found in public directory');
+        }
+        
         // Copy icon files and other public assets
         const publicDir = path.resolve(__dirname, 'public');
         
@@ -97,20 +66,107 @@ function extensionAssetsPlugin(): Plugin {
           
           // Copy icon files directly to dist root for manifest.json references
           for (const icon of iconFiles) {
-            const srcFile = path.resolve(publicDir, icon);
+            // Check both in public root and in icons subdirectory
+            let srcFile = path.resolve(publicDir, icon);
+            const iconSubDirFile = path.resolve(publicDir, 'icons', icon);
+            
+            if (fs.existsSync(iconSubDirFile)) {
+              srcFile = iconSubDirFile;
+            }
+            
             if (fs.existsSync(srcFile)) {
               const destFile = path.resolve(distDir, icon);
               fs.copyFileSync(srcFile, destFile);
               console.log(`✅ Copied ${icon} to dist folder root`);
+            } else {
+              console.warn(`⚠️ Icon file ${icon} not found in public or public/icons directory`);
             }
           }
           
-          // Then copy all other public files
-          copyDirRecursive(publicDir, distDir, iconFiles);
+          // Copy README.md from public to dist if it exists
+          const readmePath = path.resolve(publicDir, 'README.md');
+          if (fs.existsSync(readmePath)) {
+            const destReadmePath = path.resolve(distDir, 'README.md');
+            fs.copyFileSync(readmePath, destReadmePath);
+            console.log('✅ Copied README.md to dist folder');
+          }
+          
+          // Copy entire public/icons directory if it exists
+          const iconsDir = path.resolve(publicDir, 'icons');
+          if (fs.existsSync(iconsDir)) {
+            const destIconsDir = path.resolve(distDir, 'icons');
+            
+            // Create destination directory if it doesn't exist
+            if (!fs.existsSync(destIconsDir)) {
+              fs.mkdirSync(destIconsDir, { recursive: true });
+            }
+            
+            // Copy all files from icons directory
+            const iconFiles = fs.readdirSync(iconsDir);
+            for (const file of iconFiles) {
+              const srcFile = path.resolve(iconsDir, file);
+              const destFile = path.resolve(destIconsDir, file);
+              
+              if (fs.statSync(srcFile).isFile()) {
+                fs.copyFileSync(srcFile, destFile);
+                console.log(`✅ Copied ${file} to dist/icons folder`);
+              }
+            }
+          }
         }
         
-        // Fix asset paths in HTML files for Chrome extension
-        fixHtmlPaths(distDir);
+        // No need to copy options.html and sidepanel.html as they're built by Vite
+        // Check if the options-react.html and sidepanel-react.html were built
+        // and rename them to options.html and sidepanel.html
+        const builtOptionsPath = path.resolve(distDir, 'options-react.html');
+        const destOptionsPath = path.resolve(distDir, 'options.html');
+        if (fs.existsSync(builtOptionsPath)) {
+          // Rename the file
+          fs.renameSync(builtOptionsPath, destOptionsPath);
+          console.log('✅ Renamed options-react.html to options.html');
+        } else {
+          console.error('❌ Built options-react.html not found');
+          
+          // Fallback to copying the old file if available
+          const optionsPath = path.resolve(__dirname, 'options.html');
+          if (fs.existsSync(optionsPath)) {
+            fs.copyFileSync(optionsPath, destOptionsPath);
+            console.log('✅ Copied options.html to dist folder (fallback)');
+          }
+        }
+        
+        const builtSidepanelPath = path.resolve(distDir, 'sidepanel-react.html');
+        const destSidepanelPath = path.resolve(distDir, 'sidepanel.html');
+        if (fs.existsSync(builtSidepanelPath)) {
+          // Rename the file
+          fs.renameSync(builtSidepanelPath, destSidepanelPath);
+          console.log('✅ Renamed sidepanel-react.html to sidepanel.html');
+        } else {
+          console.error('❌ Built sidepanel-react.html not found');
+          
+          // Fallback to copying the old file if available
+          const sidepanelPath = path.resolve(__dirname, 'sidepanel.html');
+          if (fs.existsSync(sidepanelPath)) {
+            fs.copyFileSync(sidepanelPath, destSidepanelPath);
+            console.log('✅ Copied sidepanel.html to dist folder (fallback)');
+          }
+        }
+        
+        // Fix HTML file paths to use relative paths instead of absolute
+        const htmlFiles = ['index.html', 'options.html', 'sidepanel.html'];
+        for (const htmlFile of htmlFiles) {
+          const htmlPath = path.resolve(distDir, htmlFile);
+          if (fs.existsSync(htmlPath)) {
+            let content = fs.readFileSync(htmlPath, 'utf8');
+            
+            // Replace absolute paths with relative paths
+            content = content.replace(/src="\//g, 'src="./');
+            content = content.replace(/href="\//g, 'href="./');
+            
+            fs.writeFileSync(htmlPath, content);
+            console.log(`✅ Fixed asset paths in ${htmlFile}`);
+          }
+        }
       } catch (error) {
         console.error('❌ Error copying extension files:', error);
       }
@@ -118,145 +174,27 @@ function extensionAssetsPlugin(): Plugin {
   };
 }
 
-// Helper to copy directory contents recursively
-function copyDirRecursive(src: string, dest: string, excludeFiles: string[] = []) {
-  const entries = fs.readdirSync(src, { withFileTypes: true });
-  
-  for (const entry of entries) {
-    const srcPath = path.join(src, entry.name);
-    const destPath = path.join(dest, entry.name);
-    
-    if (entry.isDirectory()) {
-      // Skip node_modules and other unnecessary folders
-      if (['node_modules', '.git', '.cache'].includes(entry.name)) {
-        continue;
+export default defineConfig({
+  plugins: [
+    react(),
+    extensionAssetsPlugin()
+  ],
+  resolve: {
+    alias: {
+      '@': resolve(__dirname, './src'),
+    },
+  },
+  build: {
+    outDir: 'dist',
+    emptyOutDir: true,
+    rollupOptions: {
+      input: {
+        main: resolve(__dirname, 'index.html'),
+        options: resolve(__dirname, 'options-react.html'),
+        sidepanel: resolve(__dirname, 'sidepanel-react.html')
       }
-      
-      // Create directory if it doesn't exist
-      if (!fs.existsSync(destPath)) {
-        fs.mkdirSync(destPath, { recursive: true });
-      }
-      
-      // Copy contents recursively
-      copyDirRecursive(srcPath, destPath, excludeFiles);
-    } else if (!excludeFiles.includes(entry.name)) {
-      // Copy file if it's not excluded
-      fs.copyFileSync(srcPath, destPath);
-      console.log(`✅ Copied ${entry.name} to ${path.relative(__dirname, destPath)}`);
     }
-  }
-}
-
-// Fix HTML file paths
-function fixHtmlPaths(distDir: string) {
-  const htmlFiles = ['index.html', 'options.html', 'sidepanel.html'];
-  
-  for (const htmlFile of htmlFiles) {
-    const htmlPath = path.resolve(distDir, htmlFile);
-    if (fs.existsSync(htmlPath)) {
-      let htmlContent = fs.readFileSync(htmlPath, 'utf8');
-      
-      // Replace absolute paths with relative ones
-      htmlContent = htmlContent.replace(/src="\/assets\//g, 'src="./assets/');
-      htmlContent = htmlContent.replace(/href="\/assets\//g, 'href="./assets/');
-      
-      // Ensure proper CSP meta tag for Chrome extensions
-      if (!htmlContent.includes('<meta http-equiv="Content-Security-Policy"')) {
-        const headEndTag = '</head>';
-        const cspTag = `  <meta http-equiv="Content-Security-Policy" content="script-src 'self'; object-src 'self'">\n  ${headEndTag}`;
-        htmlContent = htmlContent.replace(headEndTag, cspTag);
-      }
-      
-      fs.writeFileSync(htmlPath, htmlContent);
-      console.log(`✅ Fixed asset paths in ${htmlFile}`);
-    }
-  }
-}
-
-// Configuration
-export default defineConfig(({ command, mode }): UserConfig => {
-  // Determine if we're in production mode based on command and mode
-  const isProduction = mode === 'production';
-  
-  // Base configuration
-  const config: UserConfig = {
-    plugins: [
-      react(),
-      extensionAssetsPlugin(),
-      // Add bundle analyzer in production
-      isProduction && visualizer({
-        open: false,
-        gzipSize: true,
-        brotliSize: true,
-        filename: 'dist/stats.html',
-      }),
-    ].filter(Boolean),
-    
-    resolve: {
-      alias: {
-        '@': resolve(__dirname, './src'),
-      },
-    },
-    
-    define: {
-      // Define environment variables
-      'process.env.NODE_ENV': JSON.stringify(isProduction ? 'production' : 'development'),
-      __APP_VERSION__: JSON.stringify(process.env.npm_package_version),
-    },
-    
-    build: {
-      outDir: 'dist',
-      emptyOutDir: true,
-      assetsDir: 'assets',
-      
-      // Generate proper source maps for production (external) or development (inline)
-      sourcemap: isProduction ? true : 'inline',
-      
-      // Minification options
-      minify: isProduction ? 'terser' : false,
-      terserOptions: isProduction ? {
-        compress: {
-          drop_console: false, // Chrome extensions often need console for debugging
-          drop_debugger: true,
-        },
-      } : undefined,
-      
-      // Split chunks for better caching
-      rollupOptions: {
-        input: {
-          main: resolve(__dirname, 'index.html'),
-          options: resolve(__dirname, 'options.html'),
-          sidepanel: resolve(__dirname, 'sidepanel.html')
-        },
-        output: {
-          entryFileNames: 'assets/[name]-[hash].js',
-          chunkFileNames: 'assets/[name]-[hash].js',
-          assetFileNames: 'assets/[name]-[hash].[ext]',
-          // Adjust chunk size warning limit
-          manualChunks: {
-            react: ['react', 'react-dom'],
-            // Add other common dependencies here
-          },
-        }
-      },
-      
-      // Chrome extensions have size constraints, report on them
-      reportCompressedSize: true,
-      chunkSizeWarningLimit: 500, // Chrome extensions should be small, so set a lower limit
-    },
-    
-    // Use relative paths for assets
-    base: './',
-    
-    // Customize dev server (useful for development only)
-    server: {
-      port: 3000,
-      strictPort: true,
-      hmr: {
-        port: 3000,
-      },
-    },
-  };
-  
-  return config;
+  },
+  // Load environment variables from .env file
+  envPrefix: 'VITE_'
 });
