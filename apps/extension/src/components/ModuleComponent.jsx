@@ -13,6 +13,7 @@ const ModuleComponent = () => {
   const [loading, setLoading] = useState(false);
   const [spinning, setSpinning] = useState(false);
   const [error, setError] = useState(null);
+  const [isDemo, setIsDemo] = useState(false);
 
   // Load module options on mount
   useEffect(() => {
@@ -25,6 +26,14 @@ const ModuleComponent = () => {
         const optionsData = await getModuleOptions({
           filter: { status: { _eq: 'published' } }
         });
+
+        // Check if we're using demo data by looking at the first option
+        if (optionsData.length === 1 && optionsData[0].id === 1 && 
+            optionsData[0].name === 'Demo Options (Not Authenticated)') {
+          setIsDemo(true);
+        } else {
+          setIsDemo(false);
+        }
 
         setOptions(optionsData);
       } catch (err) {
@@ -55,6 +64,19 @@ const ModuleComponent = () => {
         setItems(itemsData);
       } catch (err) {
         console.error('Error fetching module option items:', err);
+        
+        // Special handling for demo mode
+        if (isDemo && selectedOptionId === 1) {
+          // For demo mode with ID 1, we'll try to use demo items even on error
+          try {
+            const demoItems = await getModuleOptionItems(1);
+            setItems(demoItems);
+            return;
+          } catch (innerError) {
+            console.error('Failed to fetch demo items as fallback:', innerError);
+          }
+        }
+        
         setError('Failed to load items from Directus');
       } finally {
         setLoading(false);
@@ -62,7 +84,7 @@ const ModuleComponent = () => {
     };
 
     fetchItems();
-  }, [selectedOptionId]);
+  }, [selectedOptionId, isDemo]);
 
   // Handle option selection
   const handleOptionChange = (e) => {
@@ -91,6 +113,12 @@ const ModuleComponent = () => {
   return (
     <div className="p-4">
       <h2 className="text-lg font-bold mb-4">Module Demo</h2>
+
+      {isDemo && (
+        <div className="p-2 mb-4 text-sm text-blue-700 bg-blue-100 rounded-md">
+          Running in demo mode. Log in via Settings to access your Directus data.
+        </div>
+      )}
 
       {error && (
         <div className="p-2 mb-4 text-sm text-red-700 bg-red-100 rounded-md">
