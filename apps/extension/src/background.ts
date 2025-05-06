@@ -8,8 +8,7 @@ chrome.runtime.onInstalled.addListener((details) => {
   // Initialize default settings in storage
   chrome.storage.sync.set({
     theme: 'light',
-    notifications: true,
-    autoRefresh: false
+    notifications: true
   }).then(() => {
     console.log('Default settings initialized');
   }).catch((error) => {
@@ -89,20 +88,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     return true;
   }
   
-  if (message.type === 'GET_THEME') {
-    chrome.storage.sync.get(['theme'], (result) => {
-      sendResponse({ theme: result.theme || 'light' });
-    });
-    return true; // Required for async sendResponse
-  }
-  
-  if (message.type === 'SET_THEME') {
-    chrome.storage.sync.set({ theme: message.theme }, () => {
-      sendResponse({ success: true });
-    });
-    return true; // Required for async sendResponse
-  }
-  
   if (message.type === 'PERFORM_ACTION') {
     // Forward the action to the content script
     if (sender.tab?.id) {
@@ -113,3 +98,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     }
   }
 });
+
+// Export type for messaging
+export type MessageType = {
+  type: 'GET_SETTINGS' | 'UPDATE_SETTINGS' | 'PERFORM_ACTION' | 'TOGGLE_SIDE_PANEL';
+  data?: any;
+};
