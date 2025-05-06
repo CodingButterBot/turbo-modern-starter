@@ -2,6 +2,15 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Project Overview
+Turbo Modern Starter is a cutting-edge monorepo starter with:
+- TypeScript, React, and Next.js for web applications 
+- Browser extension support with Vite
+- Directus CMS integration
+- Documentation site built with Next.js and MDX
+- Comprehensive testing with Vitest and Playwright
+- CI/CD with GitHub Actions
+
 ## Build Commands
 - `pnpm dev` - Run all development servers in parallel
 - `pnpm build` - Build all packages and apps
@@ -10,6 +19,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `pnpm format` - Format all files with Prettier
 - `pnpm test` - Run all tests (unit and e2e)
 - `pnpm e2e` - Run Playwright end-to-end tests
+- `pnpm clean` - Clean build artifacts and node_modules
 
 ## Code Style Guidelines
 - Use strict TypeScript with proper type definitions
@@ -24,66 +34,113 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Follow monorepo structure with clear separation of concerns
 
 ## Repository Structure
-- `apps/` - Applications (web, extension, docs, directus)
-- `packages/` - Shared packages (ui, module, assets, config, etc.)
+- `apps/` - Applications
+  - `web/` - Next.js web application
+  - `extension/` - Browser extension (Chrome/Edge) with React, Vite, and Tailwind
+  - `docs/` - Documentation site with Next.js and MDX
+  - `directus/` - Dockerized Directus CMS instance
+- `packages/` - Shared packages
+  - `directus-client/` - Shared Directus client for web and extension
+  - Various configuration packages (ESLint, TypeScript, UI components)
+- `e2e/` - End-to-end tests with Playwright
 
-## Development Log Guidelines
+## Extension Specifics
+The browser extension (`apps/extension/`) is built with:
+- Manifest V3 compatibility
+- React and Vite for UI components
+- Tailwind CSS for styling
+- Service workers for background functionality
+- Side panel, popup, and options pages
+- Communication between extension contexts using message passing
+- Directus SDK integration for authentication and data fetching
 
-### Overview
-Development logs provide a structured audio and text record of progress and decision-making. These logs are stored outside the git repository to preserve them across branch changes.
+The extension build process involves:
+1. Building React components with Vite
+2. Generating HTML files for popup, options, and side panel
+3. Copying static assets (icons, scripts) to the dist folder
+4. Running verification to ensure all required files are present
 
-### Log Location
-- All development logs are stored in `/home/codingbutter/GitHub/dev_log/`
-- Logs are organized by date using a year-month/day folder structure (e.g., `/dev_log/2025-05/05/`)
-- Each day has a consolidated `log.md` file containing all entries for that day
-- Audio files are stored alongside the log.md file in the same directory
+Common extension issues include:
+- Service worker importScripts path errors
+- HTML file generation and proper paths
+- Asset copying and pathing
+- Chrome extension API version compatibility
 
-### Log Format
-Each log entry in the log.md file must include:
-1. Timestamped header in the format: `### [HH:MM:SS] Entry Title`
-2. Audio file reference link: `[YYYYMMDD_HHMMSS_topic-identifier.mp3](./YYYYMMDD_HHMMSS_topic-identifier.mp3)`
-3. GitHub issue/PR references (if applicable): `[#XX](https://github.com/CodingButterBot/turbo-modern-starter/issues/XX)`
-4. Transcript of the audio log in a markdown code block
+## Communication Preferences
+- Always use ElevenLabs voice "Sebastian Lague" (voice ID: tAblEwhJ8ycHNukBlZMA) when generating audio responses
+- When generating audio with ElevenLabs, immediately play the audio using the play_audio tool
+- Always use mcp__elevenlabs__text_to_speech tool for direct verbal communication
+- Always follow text_to_speech with play_audio tool to play the generated audio
+- Use "\n" instead of line breaks in all text_to_speech content
+- Assume the user is at their desk and will hear all audio logs
+- Prefer using SDK libraries over direct API calls when available
+- Check memory regularly for user preferences and previous interactions
+- Provide periodic status updates on complex, multi-step tasks
+- Be concise but informative in text responses
 
-### Audio Log Requirements
-- Each audio log should be 60-90 seconds in length
-- Use Sebastian Lague's voice (voice ID: tAblEwhJ8ycHNukBlZMA) for all audio recordings
-- Audio files must be named with the pattern: `YYYYMMDD_HHMMSS_topic-identifier.mp3`
-- After creating an audio file, always play it using the `mcp__elevenlabs__play_audio` tool
+## Developer Audio Logs
+Create regular audio logs in the `dev_log/` directory with the following organization:
 
-### Creating a New Dev Log Entry
-1. Check the existing log.md file at `/home/codingbutter/GitHub/dev_log/YYYY-MM/DD/log.md` for reference
-2. Generate the audio log using the ElevenLabs TTS tool with Sebastian Lague's voice
-3. Rename the generated audio file to follow the convention: `YYYYMMDD_HHMMSS_topic-identifier.mp3`
-4. Play the audio file to verify it was created correctly
-5. Add a new entry to the log.md file with proper timestamp, audio link, and transcript
-6. Update the "Summary of Work" section in log.md to include the new accomplishment
-
-### Example Workflow
+### Directory Structure
 ```
-1. Create audio with mcp__elevenlabs__text_to_speech using Sebastian Lague's voice ID
-2. Rename the file to YYYYMMDD_HHMMSS_topic-identifier.mp3
-3. Play the audio file with mcp__elevenlabs__play_audio
-4. Add a new entry to the day's log.md file
-5. Update the Summary of Work section
+dev_log/
+  └── YYYY-MM/
+      └── DD/
+          ├── log.md (daily log file with all entries)
+          ├── YYYYMMDD_HHMMSS_brief-title.mp3 (audio file 1)
+          └── YYYYMMDD_HHMMSS_brief-title.mp3 (audio file 2)
 ```
 
-### Log Entry Structure
-```
-### [HH:MM:SS] Entry Title
-- **Audio**: [YYYYMMDD_HHMMSS_topic-identifier.mp3](./YYYYMMDD_HHMMSS_topic-identifier.mp3)
-- **Related Issues**: [#XX](https://github.com/CodingButterBot/turbo-modern-starter/issues/XX)
+### Log File Requirements
+- Organize logs in year-month/day folder structure (e.g., `dev_log/2025-05/05/`)
+- Name audio files with format: `YYYYMMDD_HHMMSS_brief-title.mp3`
+- Create a daily `log.md` file containing:
+  - Timestamps for each entry
+  - Transcripts of each audio log
+  - Links to audio files
+  - Array of GitHub issue links related to each log entry
+- Add links from GitHub issues to relevant log entries
+- Delete purely conversational audio not related to development
+- Commit audio logs and log.md files to the repository
+- Maintain consistent and frequent logging
+
+### Audio Log Structure
+Each dev log should follow this 60-90 second structure:
+1. **Identifier** (5-10s): State log number, date, and related issue number
+2. **Context** (10-15s): Briefly explain what you're working on and why
+3. **Progress** (20-30s): Summarize work completed since last log
+4. **Challenges** (10-15s): Mention any obstacles or insights
+5. **Next Steps** (10-15s): Outline immediate plans
+6. **Questions** (optional): Note any blocking issues requiring feedback
+
+Example log.md entry:
+```markdown
+### [10:15:30] Extension Build Process Fixes
+- **Audio**: [20250505_101530_extension-build-fixes.mp3](./20250505_101530_extension-build-fixes.mp3)
+- **Related Issues**: [#42](https://github.com/user/repo/issues/42), [#45](https://github.com/user/repo/issues/45)
 - **Transcript**:
   ```
-  Dev Log #XX, Month Day, Year, regarding [topic].
-
-  [Detailed description of work completed]
-
-  [Challenges encountered]
-
-  [Next steps]
+  Dev Log #3, May 5th, regarding issue #42.
+  I'm working on fixing the extension build process to properly generate HTML files.
+  Since yesterday, I've implemented the post-build script that correctly copies assets and verified the manifest.json paths are working properly.
+  The main challenge was figuring out why relative paths weren't resolving - turns out we needed to update the base URL in the Vite config.
+  Next, I'll finalize the verification script and add tests to prevent regression.
+  Question: Should we also update the extension documentation with these changes?
   ```
 ```
 
-### Reference
-Always check existing log entries at `/home/codingbutter/GitHub/dev_log/` for reference before creating new entries. Follow the established pattern for consistency.
+### Important Note
+When generating audio with text-to-speech, use `\n` (not `\\n`) for line breaks in the text parameter.
+
+## MCP Integration
+The project includes integration with Model Context Protocol (MCP) servers:
+- Memory Server - For AI knowledge management
+- GitHub Server - For repo and PR management
+- Playwright Server - For browser automation and testing
+
+## Testing Approach
+- Unit tests with Vitest
+- Component testing with React Testing Library
+- End-to-end tests with Playwright
+- Extension-specific tests for background scripts and UI components
+- CI/CD integration with GitHub Actions

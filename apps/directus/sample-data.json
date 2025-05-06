@@ -1,0 +1,102 @@
+{
+  "module_options": [
+    {
+      "name": "Sample Colors",
+      "description": "A set of basic colors for demonstration",
+      "status": "published",
+      "module_option_items": [
+        {
+          "label": "Red",
+          "weight": 1,
+          "color": "#FF0000",
+          "sort": 1,
+          "status": "published"
+        },
+        {
+          "label": "Green",
+          "weight": 1,
+          "color": "#00FF00",
+          "sort": 2,
+          "status": "published"
+        },
+        {
+          "label": "Blue",
+          "weight": 1,
+          "color": "#0000FF",
+          "sort": 3,
+          "status": "published"
+        },
+        {
+          "label": "Yellow",
+          "weight": 1,
+          "color": "#FFFF00",
+          "sort": 4,
+          "status": "published"
+        }
+      ]
+    },
+    {
+      "name": "Team Members",
+      "description": "Example team member list for assignments",
+      "status": "published",
+      "module_option_items": [
+        {
+          "label": "Alice",
+          "weight": 1,
+          "color": null,
+          "sort": 1,
+          "status": "published"
+        },
+        {
+          "label": "Bob",
+          "weight": 1,
+          "color": null,
+          "sort": 2,
+          "status": "published"
+        },
+        {
+          "label": "Charlie",
+          "weight": 1,
+          "color": null,
+          "sort": 3,
+          "status": "published"
+        },
+        {
+          "label": "Diana",
+          "weight": 1,
+          "color": null,
+          "sort": 4,
+          "status": "published"
+        }
+      ]
+    },
+    {
+      "name": "Weighted Options",
+      "description": "Example showing options with different weights",
+      "status": "published",
+      "module_option_items": [
+        {
+          "label": "Common (3x)",
+          "weight": 3,
+          "color": null,
+          "sort": 1,
+          "status": "published"
+        },
+        {
+          "label": "Uncommon (2x)",
+          "weight": 2,
+          "color": null,
+          "sort": 2,
+          "status": "published"
+        },
+        {
+          "label": "Rare (1x)",
+          "weight": 1,
+          "color": null,
+          "sort": 3,
+          "status": "published"
+        }
+      ]
+    }
+  ]
+}
