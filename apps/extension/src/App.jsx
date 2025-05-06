@@ -1,158 +1,105 @@
-import React, { useState } from 'react';
-import {
-  ThemeProvider,
-  Card,
-  ThemeToggle,
-  ToggleSwitch,
-  TabNav,
-  StatusIndicator,
-  SettingsPanel,
-  useTheme
-} from './components/ui';
-
-// Example settings for the SettingsPanel
-const EXAMPLE_SETTINGS = [
-  {
-    id: 'notifications',
-    label: 'Notifications',
-    description: 'Enable desktop notifications',
-    control: (props) => <ToggleSwitch {...props} />
-  },
-  {
-    id: 'darkMode',
-    label: 'Dark Mode',
-    description: 'Enable dark mode for the extension',
-    control: (props) => <ThemeToggle variant="switch" {...props} />
-  },
-  {
-    id: 'autoRefresh',
-    label: 'Auto Refresh',
-    description: 'Automatically refresh data every minute',
-    control: (props) => <ToggleSwitch {...props} />
-  }
-];
-
-// Example tabs for the TabNav
-const EXAMPLE_TABS = [
-  { id: 'home', label: 'Home' },
-  { id: 'data', label: 'Data' },
-  { id: 'settings', label: 'Settings' }
-];
-
-// Example component that uses the theme context
-const ThemedContent = () => {
-  const { theme } = useTheme();
-  const isDark = theme === 'dark';
-
-  return (
-    <div className={`p-4 ${isDark ? 'text-white' : 'text-gray-800'}`}>
-      <h2 className="mb-3 text-lg font-semibold">Current Theme: {theme}</h2>
-      <p className="mb-3">
-        This content automatically adapts to the current theme.
-      </p>
-      <div className="mb-4 flex items-center gap-2">
-        <StatusIndicator status="online" />
-        <span>System Status: Online</span>
-      </div>
-    </div>
-  );
-};
+import React, { useState, useEffect } from 'react';
 
 function App() {
-  const [activeTab, setActiveTab] = useState('home');
-  const [settings, setSettings] = useState({
-    notifications: true,
-    darkMode: false,
-    autoRefresh: false
-  });
+  const [settings, setSettings] = useState({ theme: 'light', notifications: true });
+  const [status, setStatus] = useState('Loading...');
 
-  // Handle settings change
-  const handleSettingChange = (id, value) => {
-    setSettings(prev => ({
-      ...prev,
-      [id]: value
-    }));
+  useEffect(() => {
+    // Fetch settings from storage when the component mounts
+    chrome.storage.sync.get(['theme', 'notifications'])
+      .then((result) => {
+        setSettings(result);
+        setStatus('Settings loaded');
+      })
+      .catch((error) => {
+        console.error('Error fetching settings:', error);
+        setStatus('Error loading settings');
+      });
+  }, []);
+
+  const toggleTheme = () => {
+    const newTheme = settings.theme === 'light' ? 'dark' : 'light';
+    chrome.storage.sync.set({ ...settings, theme: newTheme })
+      .then(() => {
+        setSettings({ ...settings, theme: newTheme });
+        setStatus('Theme updated: ' + newTheme);
+      })
+      .catch((error) => {
+        console.error('Error updating theme:', error);
+        setStatus('Error updating theme');
+      });
   };
 
-  // Render tab content based on active tab
-  const renderTabContent = () => {
-    switch (activeTab) {
-      case 'home':
-        return (
-          <Card title="Welcome" className="my-4" data-testid="tab-content-home">
-            <ThemedContent />
-            <div className="mt-4 flex justify-center">
-              <ThemeToggle variant="button" />
-            </div>
-          </Card>
-        );
-      case 'data':
-        return (
-          <Card title="Data View" className="my-4" data-testid="tab-content-data">
-            <div className="flex flex-col gap-3">
-              <div className="flex justify-between">
-                <span>CPU Usage</span>
-                <StatusIndicator status="online" label="Normal" />
-              </div>
-              <div className="flex justify-between">
-                <span>Memory Usage</span>
-                <StatusIndicator status="warning" label="High" />
-              </div>
-              <div className="flex justify-between">
-                <span>Network Status</span>
-                <StatusIndicator status="offline" label="Disconnected" />
-              </div>
-            </div>
-          </Card>
-        );
-      case 'settings':
-        return (
-          <SettingsPanel
-            title="Extension Settings"
-            data-testid="tab-content-settings"
-            settings={EXAMPLE_SETTINGS.map(setting => ({
-              ...setting,
-              value: settings[setting.id],
-              onChange: (value) => handleSettingChange(setting.id, value)
-            }))}
-            footer={
-              <div className="mt-4 flex justify-end gap-2">
-                <button className="rounded bg-gray-200 px-3 py-1.5 text-sm">Reset</button>
-                <button className="rounded bg-blue-500 px-3 py-1.5 text-sm text-white">Save</button>
-              </div>
-            }
-          />
-        );
-      default:
-        return null;
-    }
+  const toggleNotifications = () => {
+    const newValue = !settings.notifications;
+    chrome.storage.sync.set({ ...settings, notifications: newValue })
+      .then(() => {
+        setSettings({ ...settings, notifications: newValue });
+        setStatus(`Notifications ${newValue ? 'enabled' : 'disabled'}`);
+      })
+      .catch((error) => {
+        console.error('Error updating notifications:', error);
+        setStatus('Error updating notifications');
+      });
   };
 
   return (
-    <ThemeProvider>
-      <div 
-        className="mx-auto max-w-md rounded-lg bg-white p-4 shadow-lg dark:bg-gray-800 dark:text-white"
-        data-testid="app-container"
-      >
-        <div className="mb-4 flex items-center justify-between" data-testid="toolbar">
-          <h1 className="text-xl font-bold">Turbo Modern Starter</h1>
-          <ThemeToggle size="sm" data-testid="theme-toggle" />
+    <div className={`mx-auto max-w-md rounded-lg ${settings.theme === 'dark' ? 'bg-gray-800 text-white' : 'bg-white text-gray-800'} p-4 shadow-lg`}>
+      <h1 className="mb-4 text-center text-xl font-bold">Turbo Modern Starter Extension</h1>
+      <p className="mb-4 text-center text-sm text-gray-500">
+        This is a browser extension built with the Turbo Modern Starter.
+      </p>
+      
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <span>Theme</span>
+          <button 
+            className={`rounded px-3 py-1 text-sm font-medium ${
+              settings.theme === 'dark' ? 'bg-gray-600 text-white' : 'bg-gray-200 text-gray-800'
+            }`}
+            onClick={toggleTheme}
+          >
+            {settings.theme === 'dark' ? 'Dark Mode' : 'Light Mode'}
+          </button>
         </div>
         
-        <TabNav 
-          tabs={EXAMPLE_TABS} 
-          activeTab={activeTab} 
-          onChange={setActiveTab}
-          data-testid="tab-navigation"
-        />
-        
-        {renderTabContent()}
-        
-        <p className="mt-4 text-center text-xs text-gray-500 dark:text-gray-400" data-testid="version">
-          Built with Turbo Modern Starter UI Components
-        </p>
+        <div className="flex items-center justify-between">
+          <span>Notifications</span>
+          <label className="relative inline-block h-6 w-11">
+            <input 
+              type="checkbox" 
+              className="peer h-0 w-0 opacity-0" 
+              checked={settings.notifications}
+              onChange={toggleNotifications}
+            />
+            <span className="absolute bottom-0 left-0 right-0 top-0 cursor-pointer rounded-full bg-gray-300 transition duration-300 before:absolute before:bottom-1 before:left-1 before:h-4 before:w-4 before:rounded-full before:bg-white before:transition before:duration-300 peer-checked:bg-blue-500 peer-checked:before:translate-x-5"></span>
+          </label>
+        </div>
       </div>
-    </ThemeProvider>
+
+      <div className="mt-4 text-center">
+        <div className="text-xs text-gray-500">{status}</div>
+      </div>
+
+      <div className="mt-4 flex justify-center">
+        <button 
+          className="rounded bg-blue-500 px-4 py-2 font-medium text-white hover:bg-blue-600"
+          onClick={() => {
+            setStatus('Action performed at ' + new Date().toLocaleTimeString());
+            chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+              if (tabs[0]?.id) {
+                chrome.tabs.sendMessage(tabs[0].id, { 
+                  type: 'PERFORM_ACTION', 
+                  data: { timestamp: Date.now() } 
+                });
+              }
+            });
+          }}
+        >
+          Perform Action
+        </button>
+      </div>
+    </div>
   );
 }
 

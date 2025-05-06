@@ -1,28 +1,36 @@
-/**
- * Background script for the Turbo Modern Starter Extension
- * 
- * This script runs in the background and handles events
- * like extension installation, updates, and message passing.
- */
+// Background script for Turbo Modern Starter Extension
+console.log('Background script loaded');
 
-// Handle extension installation or update
+// Listen for extension installation
 chrome.runtime.onInstalled.addListener((details) => {
-  if (details.reason === 'install') {
-    // Set default settings on install
-    chrome.storage.sync.set({
-      theme: 'light',
-      notifications: true,
-      autoRefresh: false
-    });
-    
-    console.log('Extension installed - default settings applied');
-  } else if (details.reason === 'update') {
-    console.log(`Extension updated from ${details.previousVersion} to ${chrome.runtime.getManifest().version}`);
-  }
+  console.log('Extension installed:', details.reason);
+  
+  // Initialize default settings in storage
+  chrome.storage.sync.set({
+    theme: 'light',
+    notifications: true,
+    autoRefresh: false
+  }).then(() => {
+    console.log('Default settings initialized');
+  }).catch((error) => {
+    console.error('Error initializing settings:', error);
+  });
 });
 
-// Listen for messages from content script or popup
+// Listen for messages from content scripts or popup
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  console.log('Message received:', message, 'from:', sender);
+  
+  if (message.type === 'GET_SETTINGS') {
+    chrome.storage.sync.get(['theme', 'notifications']).then((data) => {
+      sendResponse(data);
+    }).catch((error) => {
+      console.error('Error getting settings:', error);
+      sendResponse({ error: 'Failed to get settings' });
+    });
+    return true; // Required to use sendResponse asynchronously
+  }
+  
   if (message.type === 'GET_THEME') {
     chrome.storage.sync.get(['theme'], (result) => {
       sendResponse({ theme: result.theme || 'light' });
@@ -36,4 +44,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     });
     return true; // Required for async sendResponse
   }
+  
+  // Handle other message types here
 });

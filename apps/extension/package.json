@@ -2,29 +2,34 @@
   "name": "extension",
   "version": "0.0.1",
   "private": true,
+  "type": "module",
   "scripts": {
-    "dev": "vite build --watch",
-    "build": "vite build",
-    "lint": "eslint --ext .js,.jsx src",
+    "dev": "vite build --watch && node copy-assets.js",
+    "start": "vite",
+    "build": "vite build && node copy-assets.js",
+    "postbuild": "node copy-assets.js",
+    "lint": "eslint --ext .js,.jsx,.ts,.tsx src",
     "type-check": "tsc --noEmit",
-    "clean": "rm -rf dist .turbo node_modules"
+    "clean": "rm -rf dist .turbo node_modules",
+    "package": "zip -r extension.zip dist"
   },
   "dependencies": {
+    "@repo/ui": "*",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "@repo/ui": "*"
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
+    "@crxjs/vite-plugin": "^1.0.14",
     "@repo/eslint-config": "*",
+    "@types/chrome": "^0.0.258",
     "@types/react": "^18.2.60",
     "@types/react-dom": "^18.2.19",
-    "@types/chrome": "^0.0.258",
     "@vitejs/plugin-react": "^4.2.1",
     "autoprefixer": "^10.4.18",
+    "eslint": "^8.57.0",
     "postcss": "^8.4.35",
     "tailwindcss": "^3.4.1",
     "typescript": "^5.3.3",
-    "vite": "^5.0.10",
-    "eslint": "^8.57.0"
+    "vite": "^5.0.10"
   }
 }
