@@ -4,10 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite build --watch && node copy-assets.js",
+    "dev": "vite build --watch",
     "start": "vite",
-    "build": "vite build && node copy-assets.js",
-    "postbuild": "node copy-assets.js",
+    "build": "vite build",
     "lint": "eslint --ext .js,.jsx,.ts,.tsx src",
     "type-check": "tsc --noEmit",
     "clean": "rm -rf dist .turbo node_modules",

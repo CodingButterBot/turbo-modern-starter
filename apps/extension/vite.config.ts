@@ -115,45 +115,67 @@ function extensionAssetsPlugin(): Plugin {
           }
         }
         
-        // No need to copy options.html and sidepanel.html as they're built by Vite
-        // Check if the options-react.html and sidepanel-react.html were built
-        // and rename them to options.html and sidepanel.html
-        const builtOptionsPath = path.resolve(distDir, 'options-react.html');
+        // Let's create options.html and sidepanel.html files using the generated assets
+        // Create options.html
         const destOptionsPath = path.resolve(distDir, 'options.html');
-        if (fs.existsSync(builtOptionsPath)) {
-          // Rename the file
-          fs.renameSync(builtOptionsPath, destOptionsPath);
-          console.log('✅ Renamed options-react.html to options.html');
-        } else {
-          console.error('❌ Built options-react.html not found');
-          
-          // Fallback to copying the old file if available
-          const optionsPath = path.resolve(__dirname, 'options.html');
-          if (fs.existsSync(optionsPath)) {
-            fs.copyFileSync(optionsPath, destOptionsPath);
-            console.log('✅ Copied options.html to dist folder (fallback)');
-          }
-        }
+        const optionsHtmlContent = `<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Extension Options</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="./assets/options.js"></script>
+  </body>
+</html>`;
+        fs.writeFileSync(destOptionsPath, optionsHtmlContent);
+        console.log('✅ Created options.html in dist folder');
         
-        const builtSidepanelPath = path.resolve(distDir, 'sidepanel-react.html');
+        // Create sidepanel.html
         const destSidepanelPath = path.resolve(distDir, 'sidepanel.html');
-        if (fs.existsSync(builtSidepanelPath)) {
-          // Rename the file
-          fs.renameSync(builtSidepanelPath, destSidepanelPath);
-          console.log('✅ Renamed sidepanel-react.html to sidepanel.html');
+        const sidepanelHtmlContent = `<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Extension Side Panel</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="./assets/sidepanel.js"></script>
+  </body>
+</html>`;
+        fs.writeFileSync(destSidepanelPath, sidepanelHtmlContent);
+        console.log('✅ Created sidepanel.html in dist folder');
+        
+        // Create popup.html (copy of index.html)
+        const indexHtmlPath = path.resolve(distDir, 'index.html');
+        const popupHtmlPath = path.resolve(distDir, 'popup.html');
+        if (fs.existsSync(indexHtmlPath)) {
+          fs.copyFileSync(indexHtmlPath, popupHtmlPath);
+          console.log('✅ Created popup.html from index.html');
         } else {
-          console.error('❌ Built sidepanel-react.html not found');
-          
-          // Fallback to copying the old file if available
-          const sidepanelPath = path.resolve(__dirname, 'sidepanel.html');
-          if (fs.existsSync(sidepanelPath)) {
-            fs.copyFileSync(sidepanelPath, destSidepanelPath);
-            console.log('✅ Copied sidepanel.html to dist folder (fallback)');
-          }
+          // Create popup.html manually
+          const popupHtmlContent = `<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Extension Popup</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="./assets/main.js"></script>
+  </body>
+</html>`;
+          fs.writeFileSync(popupHtmlPath, popupHtmlContent);
+          console.log('✅ Created popup.html in dist folder');
         }
         
         // Fix HTML file paths to use relative paths instead of absolute
-        const htmlFiles = ['index.html', 'options.html', 'sidepanel.html'];
+        const htmlFiles = ['index.html', 'options.html', 'sidepanel.html', 'popup.html'];
         for (const htmlFile of htmlFiles) {
           const htmlPath = path.resolve(distDir, htmlFile);
           if (fs.existsSync(htmlPath)) {
@@ -189,9 +211,9 @@ export default defineConfig({
     emptyOutDir: true,
     rollupOptions: {
       input: {
-        main: resolve(__dirname, 'index.html'),
-        options: resolve(__dirname, 'options-react.html'),
-        sidepanel: resolve(__dirname, 'sidepanel-react.html')
+        main: resolve(__dirname, 'src/main.tsx'),
+        options: resolve(__dirname, 'src/options.tsx'),
+        sidepanel: resolve(__dirname, 'src/sidepanel.tsx')
       }
     }
   },
