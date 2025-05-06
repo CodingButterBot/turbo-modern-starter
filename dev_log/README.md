@@ -2,6 +2,17 @@
 
 This directory contains audio logs documenting the development process, challenges, insights, and progress on various issues in the project.
 
+## Directory Structure
+
+```
+dev_log/
+  └── YYYY-MM/      # Year and month (e.g., 2025-05)
+      └── DD/       # Day of month (e.g., 05)
+          ├── log.md  # Daily log file with all entries
+          ├── YYYYMMDD_HHMMSS_brief-title.mp3  # Audio file 1
+          └── YYYYMMDD_HHMMSS_brief-title.mp3  # Audio file 2
+```
+
 ## Purpose
 
 These logs serve as:
@@ -9,17 +20,28 @@ These logs serve as:
 - Documentation of problem-solving approaches
 - A record of insights and decision-making
 - A resource for team members to understand development history
+- A linkable reference from GitHub issues
 
-## File Naming Convention
+## Log Files
 
-Files follow this naming pattern:
+Each day has a `log.md` file containing:
+- Timestamps for each entry
+- Links to audio files
+- Transcripts of each audio recording
+- Links to related GitHub issues
+- Summary of work accomplished
+- Next steps and action items
+
+## Audio Log Format
+
+Each audio log follows this naming pattern:
 ```
-YYYYMMDD_HHMMSS_issue-number_brief-title.mp3
+YYYYMMDD_HHMMSS_brief-title.mp3
 ```
 
 For example:
 ```
-20250505_140523_issue-69_fix-manifest-paths.mp3
+20250505_140523_fix-manifest-paths.mp3
 ```
 
 ## Log Structure
@@ -34,7 +56,8 @@ Each audio log follows a consistent structure:
 
 ## Usage Guidelines
 
-- Listen to logs chronologically for a complete project narrative
-- Reference logs by issue number when working on related features
-- Use as supplementary material to GitHub issues and PRs
+- Browse logs by date using the folder structure
+- Look for relevant logs in the daily `log.md` files
+- Listen to audio for more detailed context
+- Follow links between GitHub issues and log entries
 - Contribute new logs when making significant progress or facing challenges

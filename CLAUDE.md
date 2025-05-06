@@ -79,12 +79,29 @@ Common extension issues include:
 - Be concise but informative in text responses
 
 ## Developer Audio Logs
-Create regular audio logs in the `dev_log/` directory with the following requirements:
-- Name files with format: `YYYYMMDD_HHMMSS_issue-number_brief-title.mp3`
-- Save all development-related audio logs to this directory
+Create regular audio logs in the `dev_log/` directory with the following organization:
+
+### Directory Structure
+```
+dev_log/
+  └── YYYY-MM/
+      └── DD/
+          ├── log.md (daily log file with all entries)
+          ├── YYYYMMDD_HHMMSS_brief-title.mp3 (audio file 1)
+          └── YYYYMMDD_HHMMSS_brief-title.mp3 (audio file 2)
+```
+
+### Log File Requirements
+- Organize logs in year-month/day folder structure (e.g., `dev_log/2025-05/05/`)
+- Name audio files with format: `YYYYMMDD_HHMMSS_brief-title.mp3`
+- Create a daily `log.md` file containing:
+  - Timestamps for each entry
+  - Transcripts of each audio log
+  - Links to audio files
+  - Array of GitHub issue links related to each log entry
+- Add links from GitHub issues to relevant log entries
 - Delete purely conversational audio not related to development
-- Link relevant GitHub issues in log metadata
-- Commit audio logs to the repository
+- Commit audio logs and log.md files to the repository
 - Maintain consistent and frequent logging
 
 ### Audio Log Structure
@@ -96,15 +113,24 @@ Each dev log should follow this 60-90 second structure:
 5. **Next Steps** (10-15s): Outline immediate plans
 6. **Questions** (optional): Note any blocking issues requiring feedback
 
-Example script:
+Example log.md entry:
+```markdown
+### [10:15:30] Extension Build Process Fixes
+- **Audio**: [20250505_101530_extension-build-fixes.mp3](./20250505_101530_extension-build-fixes.mp3)
+- **Related Issues**: [#42](https://github.com/user/repo/issues/42), [#45](https://github.com/user/repo/issues/45)
+- **Transcript**:
+  ```
+  Dev Log #3, May 5th, regarding issue #42.
+  I'm working on fixing the extension build process to properly generate HTML files.
+  Since yesterday, I've implemented the post-build script that correctly copies assets and verified the manifest.json paths are working properly.
+  The main challenge was figuring out why relative paths weren't resolving - turns out we needed to update the base URL in the Vite config.
+  Next, I'll finalize the verification script and add tests to prevent regression.
+  Question: Should we also update the extension documentation with these changes?
+  ```
 ```
-"Dev Log #3, May 5th, regarding issue #42.
-I'm working on fixing the extension build process to properly generate HTML files.
-Since yesterday, I've implemented the post-build script that correctly copies assets and verified the manifest.json paths are working properly.
-The main challenge was figuring out why relative paths weren't resolving - turns out we needed to update the base URL in the Vite config.
-Next, I'll finalize the verification script and add tests to prevent regression.
-Question: Should we also update the extension documentation with these changes?"
-```
+
+### Important Note
+When generating audio with text-to-speech, use `\n` (not `\\n`) for line breaks in the text parameter.
 
 ## MCP Integration
 The project includes integration with Model Context Protocol (MCP) servers:
