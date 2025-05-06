@@ -44,18 +44,68 @@ function App() {
       });
   };
 
+  const openSidePanelFallback = () => {
+    setStatus('Side panel could not be opened, using popup instead');
+    // Any fallback UI logic would go here
+  };
+
   const openSidePanel = () => {
-    if (chrome.sidePanel && chrome.sidePanel.open) {
-      chrome.sidePanel.open({ windowId: chrome.windows.WINDOW_ID_CURRENT })
-        .then(() => {
-          setStatus('Side panel opened');
-        })
-        .catch((error) => {
-          console.error('Error opening side panel:', error);
-          setStatus('Error opening side panel');
+    try {
+      // Direct call to chrome.sidePanel.open() in response to user gesture
+      if (chrome?.sidePanel?.open && chrome?.tabs?.query) {
+        // Get the current tab first
+        chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
+          try {
+            if (tabs && tabs.length > 0 && tabs[0].id) {
+              // Get the current tab ID
+              const tabId = tabs[0].id;
+              console.log('Opening sidepanel with tabId:', tabId);
+              
+              // IMPORTANT: Always specify tabId when opening side panel
+              await chrome.sidePanel.open({ tabId });
+              console.log('Side panel opened successfully with tabId');
+              
+              // Close the popup window after opening the side panel
+              window.close();
+            } else {
+              // If we couldn't get a tab ID, try with current window
+              if (chrome?.windows?.getCurrent) {
+                chrome.windows.getCurrent((currentWindow) => {
+                  if (currentWindow?.id) {
+                    const windowId = currentWindow.id;
+                    console.log('Opening sidepanel with windowId:', windowId);
+                    chrome.sidePanel.open({ windowId })
+                      .then(() => {
+                        console.log('Side panel opened successfully with windowId');
+                        // Close the popup window after opening the side panel
+                        window.close();
+                      })
+                      .catch((error) => {
+                        console.error('Failed to open side panel with windowId:', error);
+                        openSidePanelFallback();
+                      });
+                  } else {
+                    console.error('Neither tab ID nor window ID available');
+                    openSidePanelFallback();
+                  }
+                });
+              } else {
+                console.warn('Windows API not available');
+                openSidePanelFallback();
+              }
+            }
+          } catch (error) {
+            console.error('Failed to open side panel:', error);
+            openSidePanelFallback();
+          }
         });
-    } else {
-      setStatus('Side panel not supported in this browser');
+      } else {
+        console.warn('Side panel API not available, falling back to popup');
+        openSidePanelFallback();
+      }
+    } catch (error) {
+      console.error('Error in sidepanel opener:', error);
+      openSidePanelFallback();
     }
   };
 
